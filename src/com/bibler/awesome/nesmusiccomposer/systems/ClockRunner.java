@@ -47,11 +47,11 @@ public class ClockRunner implements Runnable {
 	// Framerate variables
 	private long initialFrameTime;
 	private long lastFrameTime;
-	private long frameRate;
+	private long frameRate = (long) (1000 / 59.9);
 	private long frameTimeAfterSleep;
 	private long totalFrameTime;
 	private int frameCount;
-	private float averageFrameRate;
+	private double averageFrameRate;
 	
 	public void setAPU(APU apu) {
 		this.apu = apu;
@@ -83,6 +83,7 @@ public class ClockRunner implements Runnable {
 		initialFrameTime = System.currentTimeMillis() - lastFrameTime;
 		if(initialFrameTime < frameRate) {
 			try {
+				
 				Thread.sleep((long) (frameRate - initialFrameTime));
 			} catch(InterruptedException e) {}
 		}
@@ -90,7 +91,7 @@ public class ClockRunner implements Runnable {
 			frameTimeAfterSleep = System.currentTimeMillis() - lastFrameTime;
 			totalFrameTime += frameTimeAfterSleep;
 			frameCount++;
-			averageFrameRate = (float) (1000.0 / (totalFrameTime / frameCount));
+			averageFrameRate = 1000.0 / (totalFrameTime / frameCount);
 			
 		}
 		lastFrameTime = System.currentTimeMillis();

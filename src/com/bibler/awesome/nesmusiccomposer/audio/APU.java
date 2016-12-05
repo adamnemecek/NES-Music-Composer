@@ -62,7 +62,7 @@ public class APU {
 		mixer = new Mixer();
 		frameCounter = FRAME_DIVIDER_PERIOD;
 		frameStep = 1;
-		updateAudioParams(16);
+		updateAudioParams(8);
 	}
 	
 	public void setSong(Song song) {

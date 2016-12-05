@@ -1,5 +1,9 @@
 package com.bibler.awesome.nesmusiccomposer.audio;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -84,6 +88,8 @@ public class Mixer  {
 	}
 	
 	public void outputSample(int sample) {
+		byte sample0;
+		byte sample1;
 		if(audioEnabled) {
 			if(bitRate == 16) {
 				if (sample < -32768) {
@@ -96,11 +102,11 @@ public class Mixer  {
 				}
 			}
 			for(int i = 0; i < channels; i++) {
-				if(bitRate == 8) {
-					sampleBuffer[sampleBufferIndex++] = (byte) (sample & 0xFF);
-				} else {
-					sampleBuffer[sampleBufferIndex++] = (byte) (sample & 0xFF);
-					sampleBuffer[sampleBufferIndex++] = (byte) ((sample >> 8) & 0xFF);
+				sample0 = (byte) (sample & 0xFF);
+				sample1 = (byte) ((sample >> 8) & 0xFF);
+				sampleBuffer[sampleBufferIndex++] = sample0;
+				if(bitRate != 8) {
+					sampleBuffer[sampleBufferIndex++] = sample1;
 				}
 			}
 		}
@@ -136,6 +142,5 @@ public class Mixer  {
 		player.flush();
 		player.close();
 	}
-
 	
 }
