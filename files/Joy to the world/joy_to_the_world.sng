@@ -1,0 +1,169 @@
+;Joy to the World.  
+
+joy_to_the_world_header:
+    .byte $03           ;3 streams
+    
+    .byte MUSIC_SQ1     ;which stream
+    .byte $01           ;status byte (stream enabled)
+    .byte SQUARE_1      ;which channel
+    .byte $30           ;initial duty (01)
+    .byte ve_voice_one      ;volume envelope
+    .word joy_to_the_world_square1 ;pointer to stream
+    .byte $3C           ;tempo
+	
+	.byte MUSIC_SQ2     ;which stream
+    .byte $01           ;status byte (stream enabled)
+    .byte SQUARE_2      ;which channel
+    .byte $30           ;initial duty (01)
+    .byte ve_voice_five      ;volume envelope
+    .word joy_to_the_world_square2 ;pointer to stream
+    .byte $3C           ;tempo
+	
+	.byte MUSIC_TRI     ;which stream
+    .byte $01           ;status byte (stream enabled)
+    .byte TRIANGLE      ;which channel
+    .byte $80           ;initial Volume (On)
+    .byte ve_voice_two      ;volume envelope
+    .word joy_to_the_world_triangle ;pointer to stream
+    .byte $3C           ;tempo
+header_end:
+	.byte $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
+	
+	
+    
+joy_to_the_world_square1:
+
+  .byte quarter, D5
+  .byte d_eighth, Cs5
+  .byte sixteenth, B4
+  .byte d_quarter, A4
+  .byte eighth, G4
+  .byte quarter, Fs4, E4
+  .byte d_quarter, D4
+  .byte eighth, A4
+  .byte d_quarter, B4
+  .byte eighth, B4
+  .byte d_quarter, Cs5
+  .byte eighth, Cs5
+  .byte d_quarter, D5
+  
+  .byte eighth, rest
+  
+  .byte eighth, D5, D5, Cs5, B4, A4
+  .byte d_eighth, A4
+  .byte sixteenth, G4
+  .byte eighth, Fs4, D5, D5, Cs5, B4, A4
+  .byte d_eighth, A4
+  .byte sixteenth, G4
+  .byte eighth, Fs4, Fs4, Fs4, Fs4, Fs4
+  .byte sixteenth, Fs4, G4
+  .byte d_quarter, A4
+  .byte sixteenth, G4, Fs4
+  .byte eighth, E4, E4, E4
+  .byte sixteenth, E4, Fs4
+  .byte d_quarter, G4
+  .byte sixteenth, Fs4, E4
+  .byte eighth, D4
+  .byte quarter, D5
+  .byte eighth, B4
+  .byte d_eighth, A4
+  .byte sixteenth, G4
+  .byte eighth, Fs4, G4
+  .byte quarter, Fs4, E4
+  .byte half, D4  
+header_start:
+	.byte $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
+  .byte loop
+  .word joy_to_the_world_square1
+  
+  
+
+
+
+joy_to_the_world_square2:
+
+  .byte quarter, D3
+  .byte d_eighth, D3
+  .byte sixteenth, D3
+  .byte d_quarter, D3
+  .byte eighth, G2
+  .byte quarter, A2, A2
+  .byte d_quarter, D3
+  .byte eighth, Fs3
+  .byte d_quarter, G3
+  .byte eighth, G3
+  .byte d_quarter, A3
+  .byte eighth, A3
+  .byte d_quarter, D3
+  
+  .byte eighth, rest
+  
+  .byte eighth, D3
+  .byte quarter, D3, D3
+  .byte d_quarter, D3
+  .byte eighth, D3
+  .byte quarter, D3, D3
+  .byte d_quarter, D3
+  .byte eighth, rest
+  .byte d_quarter, rest
+  .byte eighth, D3, D3, D3, D3, D3
+  .byte d_quarter, A3
+  .byte eighth, A2, A2, A2, A2, A2
+  .byte d_quarter, D3
+  .byte eighth, D3
+  .byte d_quarter, D3
+  .byte eighth, G2
+  .byte quarter, A2, A2
+  .byte half, D3  
+  .byte loop
+  .word joy_to_the_world_square2
+
+
+
+joy_to_the_world_triangle:
+
+  .byte quarter, Fs4
+  .byte d_eighth, A4
+  .byte sixteenth, G4
+  .byte d_quarter, Fs4
+  .byte eighth, E4
+  .byte quarter, D4, Cs4
+  .byte d_quarter, D4
+  .byte eighth, D4
+  .byte d_quarter, G4
+  .byte eighth, G4
+  .byte d_quarter, E4
+  .byte eighth, E4
+  .byte d_quarter, Fs4
+  
+  .byte eighth, rest
+  
+  .byte eighth, Fs4, Fs4, A4, G4, Fs4
+  .byte d_eighth, Fs4
+  .byte sixteenth, E4
+  .byte eighth, D4, Fs4, Fs4, A4, G4, Fs4
+  .byte d_eighth, Fs4
+  .byte sixteenth, E4
+  .byte eighth, D4, D4, D4, D4, D4
+  .byte sixteenth, D4, E4
+  .byte d_quarter, Fs4
+  .byte sixteenth, E4, D4
+  .byte eighth, Cs4, Cs4, Cs4
+  .byte sixteenth, Cs4, D4
+  .byte d_quarter, E4
+  .byte sixteenth, D4, Cs4
+  .byte eighth, D4
+  .byte quarter, Fs4
+  .byte eighth, G4
+  .byte d_eighth, Fs4
+  .byte sixteenth, E4
+  .byte eighth, D4, E4
+  .byte quarter, D4, Cs4 
+  .byte half, D4  
+  
+  .byte loop
+  .word joy_to_the_world_triangle
+
+	
+
+	
