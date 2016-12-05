@@ -155,10 +155,10 @@ public class PulseWaveGenerator extends WaveGenerator {
 			lengthCounterHalt = (data >> 5 & 1) == 1;
 			envelopeLoopFlag = lengthCounterHalt;
 			constantVolume = (data >> 4 & 1) == 1;
-			envelope = data & 0b1111;
-			if(constantVolume) {
-				currentVolume = envelope;
-			}
+			//envelope = data & 0b1111;
+			//if(constantVolume) {
+				//currentVolume = envelope;
+			//}
 			break;
 		case 1:
 			sweepEnabled = (data >> 7 & 1) == 1;
@@ -220,10 +220,15 @@ public class PulseWaveGenerator extends WaveGenerator {
 		//final int dutyLevel = (duty >> currentStep & 1);
 		final int dutyLevel = (0b1111000 >> currentStep & 1);
 		//final int sample = (lengthCounter > 0 && timer >= 8 && !silenceFromSweep) ? (currentVolume * dutyLevel) : 0;
-		final int sample = (8 * dutyLevel);
+		final int sample = (envelope * dutyLevel);
 		totalSamples += sample;
 		sampleCountSinceLastAverage++;
 		return sample;
+	}
+	
+	@Override
+	public void setVolume(int volume) {
+		envelope = volume;
 	}
 
 }

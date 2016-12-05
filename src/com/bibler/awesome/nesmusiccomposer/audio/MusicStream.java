@@ -11,6 +11,7 @@ public class MusicStream {
 	private int frameCounter;
 	private int framesSinceLastNote;
 	private int shouldTake;
+	private Envelope envelope;
 	
 	private int periodLowRegister = 2;
 	private int periodHighRegister = 3;
@@ -39,6 +40,60 @@ public class MusicStream {
 	
 	public MusicStream() {
 		tempoCounter = 0x100;
+		envelope = new Envelope();
+		envelope.addValue(0x09);
+		envelope.addValue(0x09);
+		envelope.addValue(0x09);
+		envelope.addValue(0x09);
+		envelope.addValue(0x0A);
+		envelope.addValue(0x0a);
+		/*envelope.addValue(0x0a);
+		envelope.addValue(0x0a);
+		envelope.addValue(0x0b);
+		envelope.addValue(0x0b);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0B);
+		envelope.addValue(0x0A);
+		envelope.addValue(0x0A);
+		envelope.addValue(0x0A);
+		envelope.addValue(0x0A);
+		envelope.addValue(0x0A);
+		envelope.addValue(0x0A);
+		envelope.addValue(0x0A);
+		envelope.addValue(0x0A);
+		envelope.addValue(0x09);
+		envelope.addValue(0x09);
+		envelope.addValue(0x09);
+		envelope.addValue(0x09);
+		envelope.addValue(0x08);
+		envelope.addValue(0x08);
+		envelope.addValue(0x08);
+		envelope.addValue(0x08);
+		envelope.addValue(0x07);
+		envelope.addValue(0x07);
+		envelope.addValue(0x06);
+		envelope.addValue(0x06);
+		envelope.addValue(0x05);
+		envelope.addValue(0x05);
+		envelope.addValue(0x04);
+		envelope.addValue(0x04);
+		envelope.addValue(0x03);
+		envelope.addValue(0x03);
+		envelope.addValue(0x02);
+		envelope.addValue(0x01);*/
+		envelope.addValue(0x00);
 	}
 	
 	public void setStream(WaveGenerator stream) {
@@ -54,6 +109,9 @@ public class MusicStream {
 		if(tempoCounter > 0xFF) {
 			tempoCounter = 0;
 			advanceNoteCounter();
+		}
+		if(envelope != null) {
+			stream.setVolume(envelope.nextValue());
 		}
 		framesSinceLastNote++;
 	}
@@ -83,6 +141,9 @@ public class MusicStream {
 	
 	private void processNote(int nextByte) {
 		int note = NoteTable.getNote(nextByte);
+		if(envelope != null) {
+			envelope.reset();
+		}
 		stream.write(periodLowRegister, note & 0xFF);
 		stream.write(periodHighRegister, note >> 8 & 0xFF);
 	}

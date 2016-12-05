@@ -37,4 +37,6 @@ public class WaveGenerator {
 	}
 	
 	public void reset() {};
+	
+	public void setVolume(int volume) {}
 }
