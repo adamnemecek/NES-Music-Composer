@@ -39,4 +39,10 @@ public class WaveGenerator {
 	public void reset() {};
 	
 	public void setVolume(int volume) {}
+	
+	public void enableChannel(boolean enable) {}
+	
+	public void setDuty(int duty) {}
+	
+	public void setPeriod(int period) {}
 }

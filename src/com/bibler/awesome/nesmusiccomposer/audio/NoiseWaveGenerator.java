@@ -153,5 +153,10 @@ public class NoiseWaveGenerator extends WaveGenerator {
 		sampleCountSinceLastAverage++;
 		return decayLevelCounter;
 	}
+	
+	@Override
+	public void setPeriod(int timer) {
+		this.timer = timer;
+	}
 
 }

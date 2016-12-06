@@ -1,5 +1,5 @@
 ; drums.asm
-joy_to_the_world_triangle        = $854C
+joy_to_the_world_triangle        = $855C
 se_op_adjust_note_offset         = $82DA
 sound_load                       = $802E
 text_sound                       = $E006
@@ -7,13 +7,11 @@ clearmem                         = $C037
 note_table                       = $8304
 se_set_apu                       = $8207
 se_op_set_loop1_counter          = $82C1
-header_start                     = $84F4
 se_check_rest                    = $815F
 irq                              = $C000
 se_set_stream_volume             = $81AB
-header_end                       = $848E
 se_set_temp_ports                = $8190
-joy_to_the_world_square1         = $8496
+joy_to_the_world_square1         = $848E
 sound_opcodes                    = $826E
 se_fetch_byte                    = $80CF
 text_not_playing                 = $E00D

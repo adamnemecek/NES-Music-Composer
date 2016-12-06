@@ -19,5 +19,11 @@ public class Song {
 			stream.advanceFrame();
 		}
 	}
+	
+	public void updateTempo(float newTempo) {
+		for(MusicStream stream : streams) {
+			stream.updateTempo(newTempo);
+		}
+	}
 
 }

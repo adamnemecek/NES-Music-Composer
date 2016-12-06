@@ -2,7 +2,7 @@ package com.bibler.awesome.nesmusiccomposer.audio;
 
 public class MusicStream {
 	
-	private int tempo = 0x3c;
+	private float tempo = 0x3c;
 	private int tempoCounter;
 	private int currentNoteLength;
 	private int streamNoteLengthCounter;
@@ -13,34 +13,18 @@ public class MusicStream {
 	private int shouldTake;
 	private Envelope envelope;
 	
-	private int periodLowRegister = 2;
-	private int periodHighRegister = 3;
+	private int periodLowRegister = 0x0A;
+	private int periodHighRegister = 0x0B;
 	
-	private int[] notes = new int[] {
-			0x83, 0x29, 0x87, 0x28, 0x81, 0x26,
-			0x88, 0x24, 0x82, 0x22, 0x83, 0x21,
-			0x1F, 0x88, 0x1D, 0x82, 0x24, 0x88,
-			0x26, 0x82, 0x26, 0x88, 0x28, 0x82,
-			0x28, 0x88, 0x29, 0x82, 0x5E, 0x82,
-			0x29, 0x29, 0x28, 0x26, 0x24, 0x87,
-			0x24, 0x81, 0x22, 0x82, 0x21, 0x29,
-			0x29, 0x28, 0x26, 0x24, 0x87, 0x24,
-			0x81, 0x22, 0x82, 0x21, 0x21, 0x21,
-			0x21, 0x21, 0x81, 0x21, 0x22, 0x88,
-			0x24, 0x81, 0x22, 0x21, 0x82, 0x1F,
-			0x1F, 0x1F, 0x81, 0x1F, 0x21, 0x88,
-			0x22, 0x81, 0x21, 0x1F, 0x82, 0x1D,
-			0x83, 0x29, 0x82, 0x26, 0x87, 0x24,
-			0x81, 0x22, 0x82, 0x21, 0x22, 0x83,
-			0x21, 0x1F, 0x84, 0x1D
-	};
+	private int[] notes;
+	
 	private boolean enabled = true;
 	
 	private WaveGenerator stream;
 	
 	public MusicStream() {
 		tempoCounter = 0x100;
-		envelope = new Envelope();
+		/*envelope = new Envelope();
 		envelope.addValue(0x09);
 		envelope.addValue(0x09);
 		envelope.addValue(0x09);
@@ -92,14 +76,25 @@ public class MusicStream {
 		envelope.addValue(0x03);
 		envelope.addValue(0x03);
 		envelope.addValue(0x02);
-		envelope.addValue(0x01);*/
-		envelope.addValue(0x00);
+		envelope.addValue(0x01);
+		envelope.addValue(0x00);*/
+	}
+	
+	public void setNotes(int[] notes) {
+		this.notes = notes;
 	}
 	
 	public void setStream(WaveGenerator stream) {
 		this.stream = stream;
 	}
 	
+	public void setEnvelope(Envelope envelope) {
+		this.envelope = envelope;
+	}
+	
+	public void updateTempo(float tempo) {
+		this.tempo = tempo;
+	}
 	
 	public void advanceFrame() {
 		if(!enabled) {
@@ -144,8 +139,7 @@ public class MusicStream {
 		if(envelope != null) {
 			envelope.reset();
 		}
-		stream.write(periodLowRegister, note & 0xFF);
-		stream.write(periodHighRegister, note >> 8 & 0xFF);
+		stream.setPeriod(note);
 	}
 	
 	private void processNoteLength(int nextByte) {

@@ -12,6 +12,13 @@ public class Envelope {
 		envelopeValues = new ArrayList<Integer>();
 	}
 	
+	public void setValues(int[] values) {
+		envelopeValues.clear();
+		for(Integer i : values) {
+			envelopeValues.add(i);
+		}
+	}
+	
 	public void addValue(int valueToAdd) {
 		envelopeValues.add(valueToAdd);
 	}

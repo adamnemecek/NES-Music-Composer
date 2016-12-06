@@ -26,12 +26,11 @@ joy_to_the_world_header:
     .byte ve_voice_two      ;volume envelope
     .word joy_to_the_world_triangle ;pointer to stream
     .byte $3C           ;tempo
-header_end:
-	.byte $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
-	
 	
     
 joy_to_the_world_square1:
+.header_end:
+	.byte $FE, $FE, $FE, $FE, $FE, $FE, $FE, $FE
 
   .byte quarter, D5
   .byte d_eighth, Cs5
@@ -71,7 +70,7 @@ joy_to_the_world_square1:
   .byte eighth, Fs4, G4
   .byte quarter, Fs4, E4
   .byte half, D4  
-header_start:
+.header_start:
 	.byte $FD, $FD, $FD, $FD, $FD, $FD, $FD, $FD
   .byte loop
   .word joy_to_the_world_square1
@@ -81,6 +80,8 @@ header_start:
 
 
 joy_to_the_world_square2:
+.header_end:
+	.byte $FC, $FC, $FC, $FC, $FC, $FC, $FC, $FC
 
   .byte quarter, D3
   .byte d_eighth, D3
@@ -115,13 +116,16 @@ joy_to_the_world_square2:
   .byte eighth, G2
   .byte quarter, A2, A2
   .byte half, D3  
+.header_start:
+	.byte $FB, $FB, $FB, $FB, $FB, $FB, $FB, $FB
   .byte loop
   .word joy_to_the_world_square2
 
 
 
 joy_to_the_world_triangle:
-
+.header_end:
+	.byte $FA, $FA, $FA, $FA, $FA, $FA, $FA, $FA
   .byte quarter, Fs4
   .byte d_eighth, A4
   .byte sixteenth, G4
@@ -160,7 +164,8 @@ joy_to_the_world_triangle:
   .byte eighth, D4, E4
   .byte quarter, D4, Cs4 
   .byte half, D4  
-  
+.header_start:
+	.byte $F9, $F9, $F9, $F9, $F9, $F9, $F9, $F9 
   .byte loop
   .word joy_to_the_world_triangle
 

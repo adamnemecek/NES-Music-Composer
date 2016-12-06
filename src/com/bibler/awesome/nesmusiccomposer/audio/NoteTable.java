@@ -28,5 +28,14 @@ public class NoteTable {
 	public static int getNoteLength(int index) {
 		return noteLengths[index];
 	}
+	
+	public static int getNoteLengthFromWidth(int width) {
+		for(int i = 0; i < noteLengths.length; i++) {
+			if(i == width) {
+				return i;
+			}
+		}
+		return -1;
+	}
 
 }

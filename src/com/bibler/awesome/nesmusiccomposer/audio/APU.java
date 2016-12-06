@@ -7,15 +7,17 @@ public class APU {
 	private PulseWaveGenerator pulseTwo;
 	private TriangleWaveGenerator triOne;
 	private NoiseWaveGenerator noiseOne;
+	private PulseWaveGenerator metronome;
 	
 	private Song song;
 	
-	private float[] channelVolumes = new float[] {.5f, .5f, .5f, .5f, .5f};
+	private float[] channelVolumes = new float[] {.5f, .5f, .5f, .5f, .5f, .85f};
 	
 	private boolean pulseOneEnabled = true;
 	private boolean pulseTwoEnabled = true;
 	private boolean triEnabled = true;
 	private boolean noiseEnabled = true;
+	private boolean metronomeEnabled = true;
 	private boolean filteringOn = false;
 	
 	private int cycles = 0;
@@ -40,6 +42,7 @@ public class APU {
 	int[] pulseTwoSamples = new int[512];
 	int[] triSamples = new int[512];
 	int[] noiseSamples = new int[512];
+	int[] metronomeSamples = new int[512];
 	
 	private int[] sampleIndices = new int[5];
 	
@@ -59,10 +62,11 @@ public class APU {
 		pulseTwo = new PulseWaveGenerator(true);
 		triOne = new TriangleWaveGenerator();
 		noiseOne = new NoiseWaveGenerator();
+		metronome = new PulseWaveGenerator(false);
 		mixer = new Mixer();
 		frameCounter = FRAME_DIVIDER_PERIOD;
 		frameStep = 1;
-		updateAudioParams(8);
+		updateAudioParams(16);
 	}
 	
 	public void setSong(Song song) {
@@ -82,54 +86,7 @@ public class APU {
 		pulseTwoSamples = new int[samplesPerFrame];
 		triSamples = new int[samplesPerFrame];
 		noiseSamples = new int[samplesPerFrame];
-	}
-	
-	public void write(int addressToWrite, int data) {
-		final int register = addressToWrite - 0x4000;
-		switch(register) {
-		case 0:
-		case 1:
-		case 2:
-		case 3:
-			pulseOne.write(register, data);
-			break;
-		case 4:
-		case 5:
-		case 6:
-		case 7:
-			pulseTwo.write(register - 4, data);
-			break;
-		case 8:
-		case 0xA:
-		case 0xB:
-			triOne.write(register, data);
-			break;
-		case 0xC:
-		case 0xE:
-		case 0xF:
-			noiseOne.write(register, data);
-			break;
-		case 0x15:
-			noiseOne.setLengthCounterEnabled((data >> 3 & 1) == 1);
-			triOne.setLengthCounterEnabled((data >> 2 & 1) == 1);
-			pulseTwo.setLengthCounterEnabled((data >> 1 & 1) == 1);
-			pulseOne.setLengthCounterEnabled((data & 1) == 1);
-			break;
-		case 0x17:
-			frameCounter = 0;
-			frameCounterMode = (data >> 7) & 1;
-			disableFrameInterrupt = (data >> 6 & 1) == 1;
-			break;
-		}
-	}
-	
-	public int read(int addressToRead) {
-		if(addressToRead == 0x4015) {
-			final int ret = readStatus();
-			return ret;
-		} else {
-			return addressToRead >> 8;
-		}
+		metronomeSamples = new int[samplesPerFrame];
 	}
 	
 	
@@ -153,31 +110,18 @@ public class APU {
 		pulseOne.clock();
 		pulseTwo.clock();
 		noiseOne.clock();
+		metronome.clock();
 		totalAPUCycles++;
 	}
 	
 public void stepFrame() {
 		
 		switch(frameStep) {
-		case 1:
-			clockAllEnvelopes();
-			triOne.clockLinearCounter();
-			break;
 		case 2:
-			clockAllEnvelopes();
-			triOne.clockLinearCounter();
-			clockAllLengthCounters();
 			clockSweepUnits();
-			break;
-		case 3:
-			clockAllEnvelopes();
-			triOne.clockLinearCounter();
 			break;
 		case 4:
 			if(frameCounterMode == 0) {
-				clockAllEnvelopes();
-				triOne.clockLinearCounter();
-				clockAllLengthCounters();
 				clockSweepUnits();
 				frameStep = 0;
 				totalAPUCycles = 0;
@@ -185,9 +129,6 @@ public void stepFrame() {
 			break;
 		case 5:
 			if(frameCounterMode == 1) {
-				clockAllEnvelopes();
-				triOne.clockLinearCounter();
-				clockAllLengthCounters();
 				clockSweepUnits();
 				frameStep = 0;
 				totalAPUCycles = 0;
@@ -195,19 +136,6 @@ public void stepFrame() {
 			break;
 		}
 		frameStep++;
-	}
-	
-	private void clockAllEnvelopes() {
-		pulseOne.clockEnvelope();
-		pulseTwo.clockEnvelope();
-		noiseOne.clockEnvelope();
-	}
-	
-	private void clockAllLengthCounters() {
-		pulseOne.clockLengthCounter();
-		pulseTwo.clockLengthCounter();
-		triOne.clockLengthCounter();
-		noiseOne.clockLengthCounter();
 	}
 	
 	private void clockSweepUnits() {
@@ -232,6 +160,7 @@ public void stepFrame() {
 		pulseTwo.reset();
 		triOne.reset();
 		noiseOne.reset();
+		metronome.reset();
 		frameStep = 1;
 	}
 	
@@ -248,6 +177,9 @@ public void stepFrame() {
 			break;
 		case 3:
 			noiseEnabled = enabled;
+			break;
+		case 4:
+			metronomeEnabled = enabled;
 			break;
 		}
 	}
@@ -275,22 +207,15 @@ public void stepFrame() {
 		pulseTwoSamples[sampleIndex] = (int) ((pulseTwoEnabled ? pulseTwo.getSample() : 0) * channelVolumes[1]);
 		triSamples[sampleIndex] = (int) ((triEnabled ? triOne.getSample() : 0) * channelVolumes[2]);
 		noiseSamples[sampleIndex] = (int) ((noiseEnabled ? noiseOne.getSample() : 0) * channelVolumes[3]);
+		metronomeSamples[sampleIndex] = (int) ((metronomeEnabled ? metronome.getSample() : 0) * channelVolumes[4]);
 		double total = (.00752 * (pulseOneSamples[sampleIndex] + pulseTwoSamples[sampleIndex])) 
-				+ ((0.00851 * triSamples[sampleIndex]) + (noiseSamples[sampleIndex] * .00494));
+				+ ((0.00851 * triSamples[sampleIndex]) + (noiseSamples[sampleIndex] * .00494) + (metronomeSamples[sampleIndex] * .0037));
 		total *= volumeMultiplier;
 		sampleIndex++;
 		if(sampleIndex >= samplesPerFrame) {
 			sampleIndex = 0;
 		}
 		return (int) total; 
-	}
-	
-	private int readStatus() {
-		final int noiseLength = (noiseOne.getLengthCounter() > 0 ? 1 : 0);
-		final int triLength = (triOne.getLengthCounter() > 0 ? 1 : 0);
-		final int pulseOneLength = (pulseOne.getLengthCounter() > 0 ? 1 : 0);
-		final int pulseTwoLength = (pulseTwo.getLengthCounter() > 0 ? 1 : 0);
-		return pulseOneLength | (pulseTwoLength << 1) | (triLength << 2) | (noiseLength << 3);
 	}
 	
 	public byte[] getFrame() {
@@ -329,6 +254,8 @@ public void stepFrame() {
 			return triOne;
 		case 3:
 			return noiseOne;
+		case 4:
+			return metronome;
 		}
 		return null;
 	}
