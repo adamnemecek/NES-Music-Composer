@@ -7,14 +7,16 @@ import com.bibler.awesome.nesmusiccomposer.audio.Song;
 import com.bibler.awesome.nesmusiccomposer.systems.ClockRunner;
 import com.bibler.awesome.nesmusiccomposer.ui.MainFrame;
 import com.bibler.awesome.nesmusiccomposer.ui.Notebar;
+import com.bibler.awesome.nesmusiccomposer.ui.PianoRoll;
 import com.bibler.awesome.nesmusiccomposer.ui.PianoRollVoice;
+import com.bibler.awesome.nesmusiccomposer.utils.PianoRollVoiceCreator;
 
 public class Main {
 	
 	private static float tempo = 0x3C;
 	
 	public static void main(String[] args) {
-		/*MusicStream square1 = new MusicStream();
+		MusicStream square1 = new MusicStream();
 		square1.setNotes(new int[] {
 				0x83, 0x29, 0x87, 0x28, 0x81, 0x26,
 				0x88, 0x24, 0x82, 0x22, 0x83, 0x21,
@@ -33,7 +35,7 @@ public class Main {
 				0x81, 0x22, 0x82, 0x21, 0x22, 0x83,
 				0x21, 0x1F, 0x84, 0x1D
 		});
-        MusicStream square2 = new MusicStream();
+        /*MusicStream square2 = new MusicStream();
         square2.setNotes(new int[] {
         		0x83, 0x11, 0x87, 0x11, 0x81, 0x11, 0x88, 0x11, 0x82, 0x0A, 
         		0x83, 0x0C, 0x0C, 0x88, 0x11, 0x82, 0x15, 0x88, 0x16, 0x82, 
@@ -83,34 +85,12 @@ public class Main {
 		runner.setAPU(apu);
 		runner.runEmulator();*/
 		
-		PianoRollVoice voice = new PianoRollVoice(0);
-		Notebar note = new Notebar();
-		note.setPos(11, 2);
-		voice.addNote(note);
+		PianoRoll roll = new PianoRoll();
+		PianoRollVoice voice = PianoRollVoiceCreator.createPianoRollVoice(square1);
+		roll.setVoice(voice, 0);
 		
-		note = new Notebar();
-		note.setPos(32, 2);
-		voice.addNote(note);
-		
-		note = new Notebar();
-		note.setPos(1, 2);
-		voice.addNote(note);
-		
-		note = new Notebar();
-		note.setPos(7, 2);
-		voice.addNote(note);
-		
-		note = new Notebar();
-		note.setPos(22, 2);
-		voice.addNote(note);
-		
-		note = new Notebar();
-		note.setPos(15, 2);
-		voice.addNote(note);
-		
-		voice.outputMusicStream();
 		MainFrame frame = new MainFrame();
-		
+		frame.getPianoRollView().setPianoRoll(roll);
 
 	}
 

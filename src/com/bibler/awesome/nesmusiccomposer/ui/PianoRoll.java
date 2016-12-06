@@ -16,6 +16,29 @@ public class PianoRoll {
 		triVoice = new PianoRollVoice(2);
 	}
 	
+	public void setVoice(PianoRollVoice voice, int index) {
+		switch(index) {
+		case 0:
+			square1Voice = voice;
+		case 1:
+			square2Voice = voice;
+		case 2:
+			triVoice = voice;
+		}
+	}
+	
+	public PianoRollVoice getVoice(int voiceIndex) {
+		switch(voiceIndex) {
+		case 0:
+			return square1Voice;
+		case 1:
+			return square2Voice;
+		case 2:
+			return triVoice;
+		}
+		return null;
+	}
+	
 	public void paint(Graphics g, Point dims) {
 		square1Voice.paint(g, dims);
 		square2Voice.paint(g, dims);

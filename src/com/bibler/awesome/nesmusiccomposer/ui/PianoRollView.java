@@ -49,6 +49,10 @@ public class PianoRollView extends JPanel {
 		t.start();
 	}
 	
+	public void setPianoRoll(PianoRoll roll) {
+		this.roll = roll;
+	}
+	
 	public void setGridWidth(int gridWidth) {
 		this.gridWidth = gridWidth;
 		if(dims == null) {

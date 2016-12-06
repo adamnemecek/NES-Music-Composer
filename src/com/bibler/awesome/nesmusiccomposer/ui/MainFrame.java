@@ -9,7 +9,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		view = new PianoRollView();
 		view.setGridWidth(5);
-		view.setLaneHeight(15);
+		view.setLaneHeight(5);
 		add(view);
 		pack();
 		setVisible(true);

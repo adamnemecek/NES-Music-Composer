@@ -21,6 +21,7 @@ public class MusicStream {
 	private boolean enabled = true;
 	
 	private WaveGenerator stream;
+	private int streamIndex;
 	
 	public MusicStream() {
 		tempoCounter = 0x100;
@@ -147,6 +148,15 @@ public class MusicStream {
 		currentNoteLength = noteLength;
 		streamNoteLengthCounter = currentNoteLength;
 		shouldTake = (int) (currentNoteLength * (Math.ceil(0x100 / tempo)));
+	}
+
+	public int getStreamNumber() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	public int[] getNotes() {
+		return notes;
 	}
 
 }
