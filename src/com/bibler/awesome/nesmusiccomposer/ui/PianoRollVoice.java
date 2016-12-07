@@ -23,9 +23,9 @@ public class PianoRollVoice {
 		notes.add(note);
 	}
 	
-	public void paint(Graphics g, Point dims) {
+	public void paint(Graphics g, Point dims, int[] laneNums) {
 		for(Notebar note : notes) {
-			note.paint(g, dims);
+			note.paint(g, dims, laneNums);
 		}
 	}
 	

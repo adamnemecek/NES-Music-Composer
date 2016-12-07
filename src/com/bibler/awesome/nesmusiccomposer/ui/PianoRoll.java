@@ -39,10 +39,10 @@ public class PianoRoll {
 		return null;
 	}
 	
-	public void paint(Graphics g, Point dims) {
-		square1Voice.paint(g, dims);
-		square2Voice.paint(g, dims);
-		triVoice.paint(g, dims);
+	public void paint(Graphics g, Point dims, int[] noteLaneNumbers) {
+		square1Voice.paint(g, dims, noteLaneNumbers);
+		square2Voice.paint(g, dims, noteLaneNumbers);
+		triVoice.paint(g, dims, noteLaneNumbers);
 	}
 
 }

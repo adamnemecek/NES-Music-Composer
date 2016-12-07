@@ -29,10 +29,13 @@ public class Notebar {
 		return topLeft.x;
 	}
 	
-	public void paint(Graphics g, Point dims) {
+	public void paint(Graphics g, Point dims, int[] noteLaneNumbers) {
+		if(topLeft.y >= 94) {
+			return;
+		}
 		g.setColor(Color.RED);
-		final int x = dims.x * topLeft.x;
-		final int y = 500 - (dims.y * topLeft.y);
+		final int x = (dims.x * topLeft.x) + 120;
+		final int y = 1512 - dims.y * (topLeft.y + 10);
 		g.fillRect(x, y, dims.x * length, dims.y);
 	}
 	
