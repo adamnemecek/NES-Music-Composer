@@ -21,7 +21,7 @@ public class MainFrame extends JFrame {
 		setJMenuBar(menu);
 		mainPanel = new MainPanel(this);
 		add(mainPanel);
-		setExtendedState(0getExtendedState()|JFrame.MAXIMIZED_BOTH );
+		setExtendedState(getExtendedState()|JFrame.MAXIMIZED_BOTH );
 		pack();
 		setVisible(true);
 	}
