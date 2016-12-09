@@ -4,30 +4,30 @@ import java.awt.Graphics;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import com.bibler.awesome.nesmusiccomposer.audio.MusicStream;
+
 public class PianoRoll {
 	
-	private PianoRollVoice square1Voice;
-	private PianoRollVoice square2Voice;
-	private PianoRollVoice triVoice;
+	private PianoRollStream square1Voice;
+	private PianoRollStream square2Voice;
+	private PianoRollStream triVoice;
 	
 	public PianoRoll() {
-		square1Voice = new PianoRollVoice(0);
-		square2Voice = new PianoRollVoice(1);
-		triVoice = new PianoRollVoice(2);
+		
 	}
 	
-	public void setVoice(PianoRollVoice voice, int index) {
-		switch(index) {
+	public void addStream(MusicStream stream) {
+		switch(stream.getStreamIndex()) {
 		case 0:
-			square1Voice = voice;
+			square1Voice = new PianoRollStream(stream);
 		case 1:
-			square2Voice = voice;
+			square2Voice = new PianoRollStream(stream);
 		case 2:
-			triVoice = voice;
+			triVoice = new PianoRollStream(stream);
 		}
 	}
 	
-	public PianoRollVoice getVoice(int voiceIndex) {
+	public PianoRollStream getVoice(int voiceIndex) {
 		switch(voiceIndex) {
 		case 0:
 			return square1Voice;

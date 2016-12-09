@@ -5,27 +5,41 @@ import java.awt.Dimension;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
+import com.bibler.awesome.nesmusiccomposer.menus.MainFrameMenu;
+import com.bibler.awesome.nesmusiccomposer.utils.UndoStack;
+
 public class MainFrame extends JFrame {
 	
 	private static final long serialVersionUID = -4596167093653505485L;
-	private MainRollView view;
+	private MainPanel mainPanel;
+	private MainFrameMenu menu;
 	
 	public MainFrame() {
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		view = new MainRollView();
-		add(view);
+		menu = new MainFrameMenu(this);
+		setJMenuBar(menu);
+		mainPanel = new MainPanel(this);
+		add(mainPanel);
+		setExtendedState(0getExtendedState()|JFrame.MAXIMIZED_BOTH );
 		pack();
 		setVisible(true);
 	}
 	
 	public void advanceOneTick() {
-		view.advanceOneTick();
+		mainPanel.getPianoRollView().advanceOneTick();
 	}
 	
 	public PianoRollView getPianoRollView() {
-		return view.getPianoRollView();
+		return mainPanel.getPianoRollView();
+	}
+	
+	public void undo() {
+		UndoStack.undo();
+	}
+	
+	public void redo() {
+		UndoStack.redo();
 	}
 
 }

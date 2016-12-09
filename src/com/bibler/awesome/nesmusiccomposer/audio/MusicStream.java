@@ -1,22 +1,22 @@
 package com.bibler.awesome.nesmusiccomposer.audio;
 
+import java.awt.Point;
+import java.util.ArrayList;
+
+import com.bibler.awesome.nesmusiccomposer.commands.UpdateNoteCommand;
+import com.bibler.awesome.nesmusiccomposer.utils.UndoStack;
+
 public class MusicStream {
 	
-	private float tempo = 0x3c;
-	private int tempoCounter;
 	private int currentNoteLength;
 	private int streamNoteLengthCounter;
 	private int currentPeriod;
 	private int currentVolumeEnvelope;
 	private int frameCounter;
-	private int framesSinceLastNote;
-	private int shouldTake;
+	
 	private Envelope envelope;
 	
-	private int periodLowRegister = 0x0A;
-	private int periodHighRegister = 0x0B;
-	
-	private int[] notes;
+	private ArrayList<Note> notes = new ArrayList<Note>();
 	
 	private boolean enabled = true;
 	
@@ -27,7 +27,50 @@ public class MusicStream {
 		this.streamIndex = streamIndex;
 	}
 	
-	public void setNotes(int[] notes) {
+	public void addNote(Note note) {
+		notes.add(note);
+	}
+	
+	public void addNote(int notePos, int noteValue, int noteLength) {
+		Note note = findNoteByValue(notePos);
+		if(note == null) {
+			note = new Note();
+			note.setLength(noteLength);
+			note.setNoteValues(notePos, noteValue);
+			System.out.println("creating a note");
+			slotNote(note);
+		} else {
+			System.out.println("Setting an note");
+			UpdateNoteCommand c = new UpdateNoteCommand(note, new Point(note.getNoteX(), noteValue));
+			UndoStack.executeAndStore(c);
+		}
+		
+	}
+	
+	private void slotNote(Note note) {
+		int noteToCompareX;
+		int noteX = note.getNoteX();
+		int currentIndex = 0;
+		for(Note noteToCompare : notes) {
+			noteToCompareX = noteToCompare.getNoteX();
+			if(noteX <= noteToCompareX) {
+				notes.add(currentIndex, note);
+				return;
+			}
+			currentIndex++;
+		}
+	}
+	
+	private Note findNoteByValue(int notePos) {
+		for(Note note : notes) {
+			if(note.posFallsWithin(notePos)) {
+				return note;
+			}
+		}
+		return null;
+	}
+	
+	public void setNotes(ArrayList<Note> notes) {
 		this.notes = notes;
 	}
 	
@@ -46,7 +89,6 @@ public class MusicStream {
 		if(envelope != null) {
 			stream.setVolume(envelope.nextValue());
 		}
-		framesSinceLastNote++;
 	}
 	
 	public void advanceOneTick() {
@@ -62,39 +104,32 @@ public class MusicStream {
 	}
 	
 	private void fetchNextByte() {
-		framesSinceLastNote = 0;
-		int nextByte = notes[frameCounter++];
-		if(nextByte < 0x80) {
-			processNote(nextByte);
-		} else if(nextByte < 0xA0) {
-			processNoteLength(nextByte);
-			fetchNextByte();
-		}
-		if(frameCounter >= notes.length) {
+		Note nextNote = notes.get(frameCounter++);
+		processNote(nextNote);
+		processNoteLength(nextNote);
+		if(frameCounter >= notes.size()) {
 			frameCounter = 0;
 		}
 	}
 	
-	private void processNote(int nextByte) {
-		int note = NoteTable.getNote(nextByte);
+	private void processNote(Note note) {
 		if(envelope != null) {
 			envelope.reset();
 		}
-		stream.setPeriod(note);
+		stream.setPeriod(note.getNotePeriod());
 	}
 	
-	private void processNoteLength(int nextByte) {
-		int noteLength = NoteTable.getNoteLength(nextByte - 0x80);
+	private void processNoteLength(Note note) {
+		int noteLength = note.getNoteLength();
 		currentNoteLength = noteLength;
 		streamNoteLengthCounter = currentNoteLength;
-		shouldTake = (int) (currentNoteLength * (Math.ceil(0x100 / tempo)));
 	}
 
-	public int getStreamNumber() {
+	public int getStreamIndex() {
 		return streamIndex;
 	}
 	
-	public int[] getNotes() {
+	public ArrayList<Note> getNotes() {
 		return notes;
 	}
 

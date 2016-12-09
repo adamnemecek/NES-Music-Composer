@@ -35,7 +35,7 @@ public class PianoRollView extends JPanel {
 	
 	//Piano Roll
 	private PianoRoll roll;
-	private int currentLength = 8;
+	private int currentLength = 4;
 	private int currentVoice = 0;
 	
 	//Parent
@@ -131,7 +131,7 @@ public class PianoRollView extends JPanel {
 	}
 	
 	private void scrollParent() {
-		//scrollPane.getHorizontalScrollBar().setValue(currentMarkerX - 250); 
+		scrollPane.getHorizontalScrollBar().setValue(currentMarkerX - 250); 
 	}
 	
 	private void handleMouseClick(MouseEvent e) {
@@ -140,8 +140,14 @@ public class PianoRollView extends JPanel {
 		roll.addNote(x, y, currentLength, currentVoice);
 	}
 	
+	private boolean scrolledDown;
+	
 	@Override
 	public void paintComponent(Graphics g) {
+		if(!scrolledDown) {
+			scrollPane.getVerticalScrollBar().setValue(1270);
+			scrolledDown = true;
+		}
 		super.paintComponent(g);
 		paintView(g);
 	}

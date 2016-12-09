@@ -3,23 +3,22 @@ package com.bibler.awesome.nesmusiccomposer.utils;
 import java.awt.Color;
 
 import com.bibler.awesome.nesmusiccomposer.audio.MusicStream;
+import com.bibler.awesome.nesmusiccomposer.audio.Note;
 import com.bibler.awesome.nesmusiccomposer.audio.NoteTable;
-import com.bibler.awesome.nesmusiccomposer.ui.Note;
-import com.bibler.awesome.nesmusiccomposer.ui.PianoRollVoice;
 
-public class PianoRollVoiceCreator {
+public class MusicStreamCreator {
 	
-	public static PianoRollVoice createPianoRollVoice(MusicStream stream) {
-		PianoRollVoice voice = new PianoRollVoice(stream.getStreamNumber());
+	public static MusicStream createMusicStream(int[] noteValues, int streamNumber) {
+		MusicStream stream = new MusicStream(streamNumber);
 		
-		int[] notes = stream.getNotes();
 		int currentNoteLengthIndex = 0;
 		int currentNoteLength = 0;
 		int currentByte;
 		int currentNotePosX = 0;
+	  
 		Note note = new Note();
 		Color color = null;
-		switch(stream.getStreamNumber()) {
+		switch(streamNumber) {
 		case 0:
 			color = Color.BLUE;
 			break;
@@ -30,14 +29,14 @@ public class PianoRollVoiceCreator {
 			color = Color.GREEN;
 			break;
 	}
-		for(int i = 0; i < notes.length; i++) {
-			currentByte = notes[i];
+		for(int i = 0; i < noteValues.length; i++) {
+			currentByte = noteValues[i];
 			if(currentByte < 0x80) {
 				note = new Note();
 				note.setColor(color);
 				note.setLength(currentNoteLengthIndex);
 				note.setPos(currentNotePosX, currentByte);
-				voice.addNote(note);
+				stream.addNote(note);
 				currentNotePosX += currentNoteLength;
 			} else if(currentByte < 0xA0) {
 				currentNoteLengthIndex = currentByte - 0x80;
@@ -45,7 +44,7 @@ public class PianoRollVoiceCreator {
 			}
 		}
 		
-		return voice;
+		return stream;
 		
 	}
 

@@ -1,23 +1,19 @@
 package com.bibler.awesome.nesmusiccomposer.main;
 
 import com.bibler.awesome.nesmusiccomposer.audio.APU;
-import com.bibler.awesome.nesmusiccomposer.audio.Envelope;
 import com.bibler.awesome.nesmusiccomposer.audio.MusicStream;
 import com.bibler.awesome.nesmusiccomposer.audio.Song;
 import com.bibler.awesome.nesmusiccomposer.systems.ClockRunner;
 import com.bibler.awesome.nesmusiccomposer.ui.MainFrame;
-import com.bibler.awesome.nesmusiccomposer.ui.Note;
 import com.bibler.awesome.nesmusiccomposer.ui.PianoRoll;
-import com.bibler.awesome.nesmusiccomposer.ui.PianoRollVoice;
-import com.bibler.awesome.nesmusiccomposer.utils.PianoRollVoiceCreator;
+import com.bibler.awesome.nesmusiccomposer.utils.MusicStreamCreator;
 
 public class Main {
 	
 	private static float tempo = 0x3C;
 	
 	public static void main(String[] args) {
-		MusicStream square1 = new MusicStream(0);
-		square1.setNotes(new int[] {
+		MusicStream square1 = MusicStreamCreator.createMusicStream(new int[] {
 				0x83, 0x29, 0x87, 0x28, 0x81, 0x26,
 				0x88, 0x24, 0x82, 0x22, 0x83, 0x21,
 				0x1F, 0x88, 0x1D, 0x82, 0x24, 0x88,
@@ -34,9 +30,8 @@ public class Main {
 				0x83, 0x29, 0x82, 0x26, 0x87, 0x24,
 				0x81, 0x22, 0x82, 0x21, 0x22, 0x83,
 				0x21, 0x1F, 0x84, 0x1D
-		});
-        MusicStream square2 = new MusicStream(1);
-        square2.setNotes(new int[] {
+		}, 0);
+        MusicStream square2 = MusicStreamCreator.createMusicStream(new int[] {
         		0x83, 0x11, 0x87, 0x11, 0x81, 0x11, 0x88, 0x11, 0x82, 0x0A, 
         		0x83, 0x0C, 0x0C, 0x88, 0x11, 0x82, 0x15, 0x88, 0x16, 0x82, 
         		0x16, 0x88, 0x18, 0x82, 0x18, 0x88, 0x11, 0x82, 0x5E, 0x82, 
@@ -45,9 +40,8 @@ public class Main {
         		0x11, 0x11, 0x11, 0x88, 0x18, 0x82, 0x0C, 0x0C, 0x0C, 0x0C, 
         		0x0C, 0x88, 0x11, 0x82, 0x11, 0x88, 0x11, 0x82, 0x0A, 0x83, 
         		0x0C, 0x0C, 0x84, 0x11
-        });
-		MusicStream tri = new MusicStream(2);
-		tri.setNotes(new int[] {
+        }, 1);
+		MusicStream tri = MusicStreamCreator.createMusicStream(new int[] {
 				0x83, 0x21, 0x87, 0x24, 0x81, 0x22, 0x88, 0x21, 0x82, 0x1F, 0x83, 
 				0x1D, 0x1C, 0x88, 0x1D, 0x82, 0x1D, 0x88, 0x22, 0x82, 0x22, 0x88, 
 				0x1F, 0x82, 0x1F, 0x88, 0x21, 0x82, 0x5E, 0x82, 0x21, 0x21, 0x24, 
@@ -57,24 +51,12 @@ public class Main {
 				0x1C, 0x1C, 0x81, 0x1C, 0x1D, 0x88, 0x1F, 0x81, 0x1D, 0x1C, 0x82, 
 				0x1D, 0x83, 0x21, 0x82, 0x22, 0x87, 0x21, 0x81, 0x1F, 0x82, 0x1D, 
 				0x1F, 0x83, 0x1D, 0x1C, 0x84, 0x1D
-		});
-		/*MusicStream metronome = new MusicStream();
-		Envelope env = new Envelope();
-		env.setValues(new int[] {
-			9, 9, 9, 9, 9, 9, 9, 9, 0	
-		});
-		metronome.setEnvelope(env);
-		metronome.setNotes(new int[] {
-				0x83, 0x41, 0x41, 0x41
-		});*/
+		}, 2);
 		
 		PianoRoll roll = new PianoRoll();
-		PianoRollVoice voice = PianoRollVoiceCreator.createPianoRollVoice(square1);
-		roll.setVoice(voice, 0);
-		voice = PianoRollVoiceCreator.createPianoRollVoice(square2);
-		roll.setVoice(voice, 1);
-		voice = PianoRollVoiceCreator.createPianoRollVoice(tri);
-		roll.setVoice(voice, 2);
+		roll.addStream(square1);
+		roll.addStream(square2);
+		roll.addStream(tri);
 		
 		MainFrame frame = new MainFrame();
 		frame.getPianoRollView().setPianoRoll(roll);
