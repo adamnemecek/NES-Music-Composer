@@ -1,8 +1,10 @@
 package com.bibler.awesome.nesmusiccomposer.utils;
 
+import java.awt.Color;
+
 import com.bibler.awesome.nesmusiccomposer.audio.MusicStream;
 import com.bibler.awesome.nesmusiccomposer.audio.NoteTable;
-import com.bibler.awesome.nesmusiccomposer.ui.Notebar;
+import com.bibler.awesome.nesmusiccomposer.ui.Note;
 import com.bibler.awesome.nesmusiccomposer.ui.PianoRollVoice;
 
 public class PianoRollVoiceCreator {
@@ -15,11 +17,24 @@ public class PianoRollVoiceCreator {
 		int currentNoteLength = 0;
 		int currentByte;
 		int currentNotePosX = 0;
-		Notebar note = new Notebar();
+		Note note = new Note();
+		Color color = null;
+		switch(stream.getStreamNumber()) {
+		case 0:
+			color = Color.BLUE;
+			break;
+		case 1:
+			color = Color.RED;
+			break;
+		case 2:
+			color = Color.GREEN;
+			break;
+	}
 		for(int i = 0; i < notes.length; i++) {
 			currentByte = notes[i];
 			if(currentByte < 0x80) {
-				note = new Notebar();
+				note = new Note();
+				note.setColor(color);
 				note.setLength(currentNoteLengthIndex);
 				note.setPos(currentNotePosX, currentByte);
 				voice.addNote(note);

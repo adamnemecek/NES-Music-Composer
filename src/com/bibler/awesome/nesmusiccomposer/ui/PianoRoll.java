@@ -39,10 +39,32 @@ public class PianoRoll {
 		return null;
 	}
 	
-	public void paint(Graphics g, Point dims, int[] noteLaneNumbers) {
-		square1Voice.paint(g, dims, noteLaneNumbers);
-		square2Voice.paint(g, dims, noteLaneNumbers);
-		triVoice.paint(g, dims, noteLaneNumbers);
+	public int getTotalNoteLength() {
+		final int square1VoiceLength = square1Voice != null ? square1Voice.getTotalNoteLength() : 0;
+		final int square2VoiceLength = square2Voice != null ? square2Voice.getTotalNoteLength() : 0;
+		final int triVoiceLength = triVoice != null ? triVoice.getTotalNoteLength() : 0;
+		return Math.max(Math.max(square1VoiceLength, square2VoiceLength), triVoiceLength);
+	}
+	
+	public void paint(Graphics g, Point dims, int[] noteLaneNumbers, int currentMarkerX) {
+		square1Voice.paint(g, dims, noteLaneNumbers, currentMarkerX);
+		square2Voice.paint(g, dims, noteLaneNumbers, currentMarkerX);
+		triVoice.paint(g, dims, noteLaneNumbers, currentMarkerX);
+	}
+
+	public void addNote(int x, int y, int currentLength, int currentVoice) {
+		switch(currentVoice) {
+		case 0:
+			square1Voice.addNote(x, y, currentLength);
+			break;
+		case 1:
+			square2Voice.addNote(x, y, currentLength);
+			break;
+		case 3:
+			triVoice.addNote(x, y, currentLength);
+			break;
+		}
+		
 	}
 
 }

@@ -4,12 +4,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 public class PianoRollView extends JPanel {
 	
@@ -31,9 +35,11 @@ public class PianoRollView extends JPanel {
 	
 	//Piano Roll
 	private PianoRoll roll;
+	private int currentLength = 8;
+	private int currentVoice = 0;
 	
-	//Assets
-	private BufferedImage keyboardImage;
+	//Parent
+	private JScrollPane scrollPane;
 	
 	private int[] noteLaneNumbers = new int[95];
 	
@@ -42,19 +48,20 @@ public class PianoRollView extends JPanel {
 			Color.WHITE, Color.WHITE, Color.LIGHT_GRAY, Color.WHITE, Color.LIGHT_GRAY, Color.WHITE
 	};
 	
-	public PianoRollView() {
+	private Color gridLineColor = new Color(12,12,12,50);
+	
+	private int currentMarkerX;
+	
+	private Rectangle bounds;
+	
+	public PianoRollView(int height) {
 		super();
-		
-		try {
-			keyboardImage = ImageIO.read(new File("C:/users/ryan/desktop/keyboard.png"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+		addMouseListener(new PianoRollMouseListener());
+		setAutoscrolls(true);
 		setGridWidth(5);
 		addFrame();
 		viewWidth = gridLines * gridWidth;
-		viewHeight = keyboardImage.getHeight();
+		viewHeight = height;
 		generateNoteLaneNumbers();
 		setPreferredSize(new Dimension(viewWidth, viewHeight));
 		
@@ -63,9 +70,13 @@ public class PianoRollView extends JPanel {
 			@Override
 			public void run() {
 				while(true) {
+					
 					repaint();
+					if(currentMarkerX > 250) {
+						scrollParent();
+					}
 					try {
-						Thread.sleep(100);
+						Thread.sleep(10);
 					} catch(InterruptedException e) {}
 				}
 			}
@@ -73,8 +84,18 @@ public class PianoRollView extends JPanel {
 		t.start();
 	}
 	
+	public void setScrollPane(JScrollPane scrollPane) {
+		this.scrollPane = scrollPane;
+	}
+	
 	public void setPianoRoll(PianoRoll roll) {
 		this.roll = roll;
+		updateViewWidth(roll.getTotalNoteLength());
+	}
+	
+	private void updateViewWidth(int totalNoteWidth) {
+		viewWidth = gridWidth * totalNoteWidth;
+		setPreferredSize(new Dimension(viewWidth, viewHeight));
 	}
 	
 	public void setGridWidth(int gridWidth) {
@@ -99,6 +120,24 @@ public class PianoRollView extends JPanel {
 	public void addFrame() {
 		numFrames++;
 		gridLines = numFrames * frameSizeInQuarterNotes * 8;
+	}
+	
+	public void advanceOneTick() {
+		currentMarkerX += gridWidth;
+		if(currentMarkerX >= viewWidth) {
+			currentMarkerX = 0;
+			scrollPane.getHorizontalScrollBar().setValue(0);
+		}
+	}
+	
+	private void scrollParent() {
+		//scrollPane.getHorizontalScrollBar().setValue(currentMarkerX - 250); 
+	}
+	
+	private void handleMouseClick(MouseEvent e) {
+		final int x = e.getX() / gridWidth;
+		final int y = ((viewHeight - e.getY()) / laneHeight) - 9;
+		roll.addNote(x, y, currentLength, currentVoice);
 	}
 	
 	@Override
@@ -127,13 +166,9 @@ public class PianoRollView extends JPanel {
 		paintLanes(g);
 		paintGrid(g);
 		if(roll != null) {
-			roll.paint(g, dims, noteLaneNumbers);
+			roll.paint(g, dims, noteLaneNumbers, currentMarkerX);
 		}
-		int viewX = getX();
-		if(viewX < 0) {
-			viewX *= -1;
-		}
-		g.drawImage(keyboardImage, viewX, 0, null);
+		paintMarker(g);
 	}
 	
 	private void paintLanes(Graphics g) {
@@ -145,9 +180,11 @@ public class PianoRollView extends JPanel {
 				octaveCount = 0;
 			}
 			g.fillRect(0, (i * laneHeight), viewWidth, laneHeight);
-			
+			g.setColor(gridLineColor);
+			g.drawLine(0, (i * laneHeight), viewWidth, (i * laneHeight));
 		}
 	}
+	
 	private void paintGrid(Graphics g) {
 		g.setColor(Color.DARK_GRAY);
 		int currentX;
@@ -155,6 +192,32 @@ public class PianoRollView extends JPanel {
 			currentX = i * gridWidth;
 			g.drawLine(currentX, 0, currentX, viewHeight);
 		}
+	}
+	
+	private void paintMarker(Graphics g) {
+		g.setColor(Color.RED);
+		g.drawLine(currentMarkerX, 0, currentMarkerX, viewHeight);
+	}
+	
+	private class PianoRollMouseListener implements MouseListener {
+
+		@Override
+		public void mouseClicked(MouseEvent arg0) {
+			handleMouseClick(arg0);
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent arg0) {}
+
+		@Override
+		public void mouseExited(MouseEvent arg0) {}
+
+		@Override
+		public void mousePressed(MouseEvent arg0) {}
+
+		@Override
+		public void mouseReleased(MouseEvent arg0) {}
+		
 	}
 
 }

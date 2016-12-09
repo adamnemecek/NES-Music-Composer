@@ -1,6 +1,7 @@
 package com.bibler.awesome.nesmusiccomposer.systems;
 
 import com.bibler.awesome.nesmusiccomposer.audio.APU;
+import com.bibler.awesome.nesmusiccomposer.ui.MainFrame;
 
 public class ClockRunner implements Runnable {
 	

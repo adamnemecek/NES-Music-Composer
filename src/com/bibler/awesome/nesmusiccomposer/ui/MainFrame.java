@@ -8,24 +8,24 @@ import javax.swing.JScrollPane;
 public class MainFrame extends JFrame {
 	
 	private static final long serialVersionUID = -4596167093653505485L;
-	private PianoRollView view;
+	private MainRollView view;
 	
 	public MainFrame() {
 		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		view = new PianoRollView();
-		view.setGridWidth(10);
-		view.setLaneHeight(14);
-		JScrollPane scroll = new JScrollPane(view);
-		scroll.setPreferredSize(new Dimension(800, 500));
-		add(scroll);
+		view = new MainRollView();
+		add(view);
 		pack();
 		setVisible(true);
 	}
 	
+	public void advanceOneTick() {
+		view.advanceOneTick();
+	}
+	
 	public PianoRollView getPianoRollView() {
-		return view;
+		return view.getPianoRollView();
 	}
 
 }

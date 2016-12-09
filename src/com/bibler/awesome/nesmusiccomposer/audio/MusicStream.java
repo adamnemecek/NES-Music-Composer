@@ -23,62 +23,8 @@ public class MusicStream {
 	private WaveGenerator stream;
 	private int streamIndex;
 	
-	public MusicStream() {
-		tempoCounter = 0x100;
-		/*envelope = new Envelope();
-		envelope.addValue(0x09);
-		envelope.addValue(0x09);
-		envelope.addValue(0x09);
-		envelope.addValue(0x09);
-		envelope.addValue(0x0A);
-		envelope.addValue(0x0a);
-		/*envelope.addValue(0x0a);
-		envelope.addValue(0x0a);
-		envelope.addValue(0x0b);
-		envelope.addValue(0x0b);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0B);
-		envelope.addValue(0x0A);
-		envelope.addValue(0x0A);
-		envelope.addValue(0x0A);
-		envelope.addValue(0x0A);
-		envelope.addValue(0x0A);
-		envelope.addValue(0x0A);
-		envelope.addValue(0x0A);
-		envelope.addValue(0x0A);
-		envelope.addValue(0x09);
-		envelope.addValue(0x09);
-		envelope.addValue(0x09);
-		envelope.addValue(0x09);
-		envelope.addValue(0x08);
-		envelope.addValue(0x08);
-		envelope.addValue(0x08);
-		envelope.addValue(0x08);
-		envelope.addValue(0x07);
-		envelope.addValue(0x07);
-		envelope.addValue(0x06);
-		envelope.addValue(0x06);
-		envelope.addValue(0x05);
-		envelope.addValue(0x05);
-		envelope.addValue(0x04);
-		envelope.addValue(0x04);
-		envelope.addValue(0x03);
-		envelope.addValue(0x03);
-		envelope.addValue(0x02);
-		envelope.addValue(0x01);
-		envelope.addValue(0x00);*/
+	public MusicStream(int streamIndex) {
+		this.streamIndex = streamIndex;
 	}
 	
 	public void setNotes(int[] notes) {
@@ -93,23 +39,18 @@ public class MusicStream {
 		this.envelope = envelope;
 	}
 	
-	public void updateTempo(float tempo) {
-		this.tempo = tempo;
-	}
-	
 	public void advanceFrame() {
 		if(!enabled) {
 			return;
-		}
-		tempoCounter += tempo;
-		if(tempoCounter > 0xFF) {
-			tempoCounter = 0;
-			advanceNoteCounter();
 		}
 		if(envelope != null) {
 			stream.setVolume(envelope.nextValue());
 		}
 		framesSinceLastNote++;
+	}
+	
+	public void advanceOneTick() {
+		advanceNoteCounter();
 	}
 	
 	private void advanceNoteCounter() {
@@ -121,7 +62,6 @@ public class MusicStream {
 	}
 	
 	private void fetchNextByte() {
-		//System.out.println("last note took: " + framesSinceLastNote + " should take: " + shouldTake);
 		framesSinceLastNote = 0;
 		int nextByte = notes[frameCounter++];
 		if(nextByte < 0x80) {
@@ -151,8 +91,7 @@ public class MusicStream {
 	}
 
 	public int getStreamNumber() {
-		// TODO Auto-generated method stub
-		return 0;
+		return streamIndex;
 	}
 	
 	public int[] getNotes() {
