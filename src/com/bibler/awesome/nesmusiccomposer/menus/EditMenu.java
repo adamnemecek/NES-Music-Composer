@@ -17,7 +17,8 @@ public class EditMenu extends JMenu {
 	
 	private MainFrame mainFrame;
 	
-	public EditMenu(MainFrame frame) {
+	public EditMenu(MainFrame frame, String name) {
+		super(name);
 		this.mainFrame = frame;
 		initialize();
 	}

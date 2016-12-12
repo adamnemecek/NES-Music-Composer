@@ -3,6 +3,10 @@ package com.bibler.awesome.nesmusiccomposer.audio;
 
 public class APU {
 	
+	public static final int SQUARE_1 = 0;
+	public static final int SQUARE_2 = 1;
+	public static final int TRI = 2;
+	
 	private PulseWaveGenerator pulseOne;
 	private PulseWaveGenerator pulseTwo;
 	private TriangleWaveGenerator triOne;

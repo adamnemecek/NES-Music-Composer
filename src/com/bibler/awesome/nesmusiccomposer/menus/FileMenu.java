@@ -8,7 +8,8 @@ public class FileMenu extends JMenu {
 	
 	private MainFrame frame;
 	
-	public FileMenu(MainFrame frame) {
+	public FileMenu(MainFrame frame, String name) {
+		super(name);
 		this.frame = frame;
 	}
 

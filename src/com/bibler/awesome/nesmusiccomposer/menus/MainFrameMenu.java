@@ -14,8 +14,8 @@ public class MainFrameMenu extends JMenuBar {
 	
 	public MainFrameMenu(MainFrame frame) {
 		super();
-		fileMenu = new FileMenu(frame);
-		editMenu = new EditMenu(frame);
+		fileMenu = new FileMenu(frame, "File");
+		editMenu = new EditMenu(frame, "Edit");
 		add(fileMenu);
 		add(editMenu);
 	}
