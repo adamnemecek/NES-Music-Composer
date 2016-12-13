@@ -158,6 +158,10 @@ public void stepFrame() {
 		outputSamples = 0;
 	}
 	
+	public void flushMixer() {
+		mixer.flushSamples();
+	}
+	
 	public void reset() {
 		frameCounter = FRAME_DIVIDER_PERIOD;
 		pulseOne.reset();

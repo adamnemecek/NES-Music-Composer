@@ -5,6 +5,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -23,9 +24,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.bibler.awesome.nesmusiccomposer.audio.APU;
+import com.bibler.awesome.nesmusiccomposer.interfaces.Notifiable;
+import com.bibler.awesome.nesmusiccomposer.interfaces.Notifier;
 import com.bibler.awesome.nesmusiccomposer.ui.MainFrame;
 
-public class ToolBar extends JToolBar {
+public class ToolBar extends JToolBar implements Notifier {
 	
 	private JRadioButton buttonPlay;
 	private JRadioButton buttonStop;
@@ -65,7 +68,7 @@ public class ToolBar extends JToolBar {
 	private int width;
 	private int height;
 	
-	private MainFrame frame;
+	private ArrayList<Notifiable> objectsToNotify = new ArrayList<Notifiable>();
 	
 	public ToolBar(int w, int h, Border b) {
 		super();
@@ -117,7 +120,7 @@ public class ToolBar extends JToolBar {
 		buttonQuarter.setSelected(true);
 	}
 	
-	public void setupButtons() {
+	private void setupButtons() {
 		buttonPlay = new JRadioButton();
 		buttonStop = new JRadioButton();
 		buttonWhole = new JRadioButton();
@@ -171,7 +174,7 @@ public class ToolBar extends JToolBar {
 		buttonRest.setActionCommand("rest");
 	}
 	
-	public void setupButton(JRadioButton b, String name, boolean selected, boolean content, ActionListener listener) {
+	private void setupButton(JRadioButton b, String name, boolean selected, boolean content, ActionListener listener) {
 		b.setPreferredSize(buttonDim);
 		try {
 			image = ImageIO.read(new File("C:/users/ryan/workspace_nes/jnesaudio/bin/images/" + name + ".png"));
@@ -187,6 +190,7 @@ public class ToolBar extends JToolBar {
 		b.addActionListener(listener);
 		b.setContentAreaFilled(content);
 		b.setBorder(emptyness);
+		b.setToolTipText(name);
 	}
 	
 	public void changeChannel(int channel) {
@@ -213,7 +217,7 @@ public class ToolBar extends JToolBar {
 		}
 	}
 	
-	public class NoteButtonActionListener implements ActionListener {
+	private class NoteButtonActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -284,28 +288,26 @@ public class ToolBar extends JToolBar {
 		}
 	}
 	
-	public class PlayActionListener implements ActionListener {
+	private class PlayActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			/*String command = arg0.getActionCommand();
+			String command = arg0.getActionCommand();
 			if(command.equals("play")) {
 				if(buttonPlay.isSelected()) {
-					BaseObject.sRegistry.score.playScore();
+					ToolBar.this.notify("PLAY");
 				} else {
-					BaseObject.sRegistry.score.pauseScore();
+					ToolBar.this.notify("PAUSE");
 				}
 			}
 			if(command.equals("stop")) {
-				BaseObject.sRegistry.score.stopScore();
+				ToolBar.this.notify("STOP");
 				buttonPlay.setSelected(false);
-			}*/
-			
+			}
 		}
-		
 	}
 	
-	public class WaveActionListener implements ActionListener {
+	private class WaveActionListener implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -330,6 +332,17 @@ public class ToolBar extends JToolBar {
 			if(command.equals("edit")) {
 				BaseObject.sRegistry.editMode = buttonEdit.isSelected();
 			}*/
+		}
+	}
+	
+	public void registerObjectToNotify(Notifiable objectToNotify) {
+		objectsToNotify.add(objectToNotify);
+	}
+
+	@Override
+	public void notify(String messageToSend) {
+		for(Notifiable notifiable : objectsToNotify) {
+			notifiable.takeNotice(messageToSend, this);
 		}
 	}
 }

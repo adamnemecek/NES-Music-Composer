@@ -47,6 +47,10 @@ public class MusicStream {
 		
 	}
 	
+	public void resetStream() {
+		frameCounter = 0;
+	}
+	
 	private void slotNote(Note note) {
 		int noteToCompareX;
 		int noteX = note.getNoteX();

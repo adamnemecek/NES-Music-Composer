@@ -33,7 +33,7 @@ public class MainRollView extends JPanel {
 	
 	private void initialize() {
 		setPreferredSize(new Dimension(800, 500));
-		imagePanel = new ImagePanel(new File("C:/users/ryan/desktop/keyboard.png"));
+		imagePanel = new ImagePanel(new File("C:/Users/rbibl/workspace/NES-Music-Composer/files/keyboard.png"));
 		imageWidth = imagePanel.getPanelWidth();
 		imageHeight = imagePanel.getPanelHeight();
 		pianoRoll = new PianoRollView(imageHeight);

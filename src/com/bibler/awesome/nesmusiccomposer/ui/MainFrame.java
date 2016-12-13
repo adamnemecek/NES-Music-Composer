@@ -5,6 +5,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.bibler.awesome.nesmusiccomposer.menus.MainFrameMenu;
+import com.bibler.awesome.nesmusiccomposer.toolbars.ToolBar;
 import com.bibler.awesome.nesmusiccomposer.utils.UndoStack;
 
 public class MainFrame extends JFrame {
@@ -42,6 +43,14 @@ public class MainFrame extends JFrame {
 	
 	public void redo() {
 		UndoStack.redo();
+	}
+	
+	public void resetSong() {
+		getPianoRollView().resetSong();
+	}
+
+	public ToolBar getToolbar() {
+		return mainPanel.getToolbar();
 	}
 
 }

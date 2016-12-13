@@ -23,4 +23,8 @@ public class ToolPanel extends JPanel {
 		add(toolbar, BorderLayout.WEST);
 	}
 
+	public ToolBar getTollbar() {
+		return toolbar;
+	}
+
 }

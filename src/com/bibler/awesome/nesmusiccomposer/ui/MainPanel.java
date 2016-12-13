@@ -7,6 +7,8 @@ import java.awt.GridBagLayout;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
+import com.bibler.awesome.nesmusiccomposer.toolbars.ToolBar;
+
 public class MainPanel extends JPanel {
 	
 	private JSplitPane middlePane;
@@ -43,6 +45,10 @@ public class MainPanel extends JPanel {
 	
 	public PianoRollView getPianoRollView() {
 		return pianoRoll.getPianoRollView();
+	}
+
+	public ToolBar getToolbar() {
+		return toolPanel.getTollbar();
 	}
 
 }

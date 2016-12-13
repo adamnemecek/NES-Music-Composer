@@ -4,6 +4,7 @@ import com.bibler.awesome.nesmusiccomposer.audio.APU;
 import com.bibler.awesome.nesmusiccomposer.audio.MusicStream;
 import com.bibler.awesome.nesmusiccomposer.audio.Song;
 import com.bibler.awesome.nesmusiccomposer.systems.ClockRunner;
+import com.bibler.awesome.nesmusiccomposer.systems.SongManager;
 import com.bibler.awesome.nesmusiccomposer.ui.MainFrame;
 import com.bibler.awesome.nesmusiccomposer.ui.PianoRoll;
 import com.bibler.awesome.nesmusiccomposer.utils.MusicStreamCreator;
@@ -78,9 +79,10 @@ public class Main {
 		ClockRunner runner = new ClockRunner();
 		runner.setAPU(apu);
 		song.setMainFrame(frame);
-		runner.runEmulator();
 		
-		
+		SongManager manager = new SongManager(runner, apu);
+		manager.setCurrentSong(song);
+		frame.getToolbar().registerObjectToNotify(manager);
 
 	}
 

@@ -125,9 +125,13 @@ public class PianoRollView extends JPanel {
 	public void advanceOneTick() {
 		currentMarkerX += gridWidth;
 		if(currentMarkerX >= viewWidth) {
-			currentMarkerX = 0;
-			scrollPane.getHorizontalScrollBar().setValue(0);
+			resetSong();
 		}
+	}
+	
+	public void resetSong() {
+		currentMarkerX = 0;
+		scrollPane.getHorizontalScrollBar().setValue(0);
 	}
 	
 	private void scrollParent() {

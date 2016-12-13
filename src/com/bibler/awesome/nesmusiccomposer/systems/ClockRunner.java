@@ -5,19 +5,30 @@ import com.bibler.awesome.nesmusiccomposer.ui.MainFrame;
 
 public class ClockRunner implements Runnable {
 	
+	
+	private final int STARTED = 0;
+	private final int IDLE = 1;
+	private final int RUNNING = 2;
+	private final int PAUSED = 3;
+	
+	
 	private boolean pause;
 	private boolean running;
+	private boolean started;
+	private boolean playing;
+	
 	private Object pauseLock = new Object();
 	private Thread thread;
 	
 	public ClockRunner() {
 	}
 	
-	public void runEmulator() {
+	public void startEmulator() {
 		if(thread == null) {
 			setupThread();
 		}
-		resumeEmulator();
+		pauseEmulator();
+		started = true;
 	}
 	
 	private void setupThread() {
@@ -27,16 +38,20 @@ public class ClockRunner implements Runnable {
 		thread.start();
 	}
 	
-	private void pauseEmulator() {
+	public void pauseEmulator() {
 		pause = true;
-		
+		playing = false;
 	}
 	
-	private void resumeEmulator() {
+	public void resumeEmulator() {
+		if(!started) {
+			startEmulator();
+		}
 		pause = false;
 		synchronized(pauseLock) {
 			pauseLock.notifyAll();
 		}
+		playing = true;
 	}
 	
 	// Dependent Systems
