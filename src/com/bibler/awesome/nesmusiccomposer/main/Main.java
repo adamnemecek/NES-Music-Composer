@@ -14,6 +14,13 @@ public class Main {
 	private static float tempo = 0x3C;
 	
 	public static void main(String[] args) {
+		MainFrame frame = new MainFrame();
+		SongManager manager = new SongManager();
+		manager.getAPU().registerObjectToNotify(frame);
+		setupDemoSong(frame, manager);
+	}
+	
+	private static void setupDemoSong(MainFrame frame, SongManager manager) {
 		MusicStream square1 = MusicStreamCreator.createMusicStream(new int[] {
 				0x83, 0x29, 0x87, 0x28, 0x81, 0x26,
 				0x88, 0x24, 0x82, 0x22, 0x83, 0x21,
@@ -55,35 +62,26 @@ public class Main {
 		}, 2);
 		
 		PianoRoll roll = new PianoRoll();
-		roll.addStream(square1);
-		roll.addStream(square2);
-		roll.addStream(tri);
-		
-		MainFrame frame = new MainFrame();
 		frame.getPianoRollView().setPianoRoll(roll);
 		
 		Song song = new Song();
 		song.addStream(square1);
 		song.addStream(square2);
 		song.addStream(tri);
-		//song.addStream(metronome);
-		APU apu = new APU();
+		
+        APU	apu = manager.getAPU();
+		
 		square1.setStream(apu.getChannel(0));
 		square2.setStream(apu.getChannel(1));
 		tri.setStream(apu.getChannel(2));
-		//metronome.setStream(apu.getChannel(4));
 		apu.getChannel(0).setDuty(2);
 		apu.getChannel(1).setDuty(1);
-		//apu.getChannel(4).setDuty(2);
 		apu.setSong(song);
-		ClockRunner runner = new ClockRunner();
-		runner.setAPU(apu);
-		song.setMainFrame(frame);
 		
-		SongManager manager = new SongManager(runner, apu);
+		roll.setSong(song);
+		
 		manager.setCurrentSong(song);
 		frame.getToolbar().registerObjectToNotify(manager);
-
 	}
 
 }

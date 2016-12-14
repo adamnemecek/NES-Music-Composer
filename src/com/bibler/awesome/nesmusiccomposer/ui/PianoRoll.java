@@ -5,18 +5,27 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import com.bibler.awesome.nesmusiccomposer.audio.MusicStream;
+import com.bibler.awesome.nesmusiccomposer.audio.Song;
 
 public class PianoRoll {
 	
 	private PianoRollStream square1Voice;
 	private PianoRollStream square2Voice;
 	private PianoRollStream triVoice;
+	private Song song;
 	
 	public PianoRoll() {
 		
 	}
 	
-	public void addStream(MusicStream stream) {
+	public void setSong(Song song) {
+		this.song = song;
+		addStream(song.getMusicStream(0));
+		addStream(song.getMusicStream(1));
+		addStream(song.getMusicStream(2));
+	}
+	
+	private void addStream(MusicStream stream) {
 		switch(stream.getStreamIndex()) {
 		case 0:
 			square1Voice = new PianoRollStream(stream);

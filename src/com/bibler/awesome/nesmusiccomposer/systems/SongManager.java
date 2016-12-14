@@ -10,27 +10,34 @@ public class SongManager implements Notifiable {
 	private ClockRunner clockRunner;
 	private APU apu;
 	
-	public SongManager(ClockRunner clockRunner, APU apu) {
-		this.clockRunner = clockRunner;
-		this.apu = apu;
+	public SongManager() {
+		this.clockRunner = new ClockRunner();
+		this.apu = new APU();
+		clockRunner.setAPU(apu);
+		setCurrentSong(new Song());
+	}
+	
+	public APU getAPU() {
+		return apu;
 	}
 	
 	public void setCurrentSong(Song currentSong) {
 		this.currentSong = currentSong;
+		apu.registerObjectToNotify(currentSong);
 	}
 	
 	private void play() {
-		currentSong.playSong();
+		//currentSong.playSong();
 		clockRunner.resumeEmulator();
 	}
 	
 	private void pause() {
-		currentSong.pauseSong();
+		//currentSong.pauseSong();
 		clockRunner.resumeEmulator();
 	}
 	
 	private void stop() {
-		currentSong.stopSong();
+		//currentSong.stopSong();
 		clockRunner.pauseEmulator();
 		apu.flushMixer();
 	}

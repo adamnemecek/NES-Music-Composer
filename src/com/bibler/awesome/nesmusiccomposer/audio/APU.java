@@ -1,7 +1,11 @@
 package com.bibler.awesome.nesmusiccomposer.audio;
 
+import java.util.ArrayList;
 
-public class APU {
+import com.bibler.awesome.nesmusiccomposer.interfaces.Notifiable;
+import com.bibler.awesome.nesmusiccomposer.interfaces.Notifier;
+
+public class APU implements Notifier {
 	
 	public static final int SQUARE_1 = 0;
 	public static final int SQUARE_2 = 1;
@@ -60,6 +64,8 @@ public class APU {
 	
 	private final int FRAME_DIVIDER_PERIOD = 7456;
 	
+	private ArrayList<Notifiable> objectsToNotify = new ArrayList<Notifiable>();
+	
 	
 	public APU() {
 		pulseOne = new PulseWaveGenerator(false);
@@ -71,6 +77,19 @@ public class APU {
 		frameCounter = FRAME_DIVIDER_PERIOD;
 		frameStep = 1;
 		updateAudioParams(16);
+	}
+	
+	public void registerObjectToNotify(Notifiable objectToNotify) {
+		checkAndRemoveType(objectToNotify);
+		objectsToNotify.add(objectToNotify);
+	}
+	
+	private void checkAndRemoveType(Notifiable objectToNotify) {
+		for(Notifiable notifiable : objectsToNotify) {
+			if(notifiable.getClass() == objectToNotify.getClass()) {
+				objectsToNotify.remove(notifiable);
+			}
+		}
 	}
 	
 	public void setSong(Song song) {
@@ -153,9 +172,9 @@ public void stepFrame() {
 	
 	public void finishFrame() {
 		mixer.flushSamples();
-		song.frame();
 		cycles = 0;
 		outputSamples = 0;
+		notify("FRAME");
 	}
 	
 	public void flushMixer() {
@@ -266,6 +285,13 @@ public void stepFrame() {
 			return metronome;
 		}
 		return null;
+	}
+
+	@Override
+	public void notify(String messageToSend) {
+		for(Notifiable objectToNotify : objectsToNotify) {
+			objectToNotify.takeNotice(messageToSend, this);
+		}	
 	}
 
 }

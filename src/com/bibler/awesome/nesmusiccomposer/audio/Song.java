@@ -8,46 +8,43 @@ import com.bibler.awesome.nesmusiccomposer.ui.MainFrame;
 
 public class Song implements Notifiable {
 	
-	private ArrayList<MusicStream> streams;
+	private MusicStream[] streams = new MusicStream[3];
 	
-	private MainFrame frame;
+	//private MainFrame frame;
 	private int tempo = 0x3c;
 	private int tempoCounter;
 	
 	
 	public Song() {
-		streams = new ArrayList<MusicStream>();
-	}
-	
-	public void setMainFrame(MainFrame frame) {
-		this.frame = frame;
+		streams[0] = new MusicStream(0);
+		streams[1] = new MusicStream(1);
+		streams[2] = new MusicStream(2);
 	}
 	
 	public void addStream(MusicStream stream) {
-		streams.add(stream);
+		streams[stream.getStreamIndex()] = stream;
 	}
 	
-	public void playSong() {
-			}
+	public MusicStream getMusicStream(int streamIndex) {
+		return streams[streamIndex];
+	}
 	
-	public void stopSong() {
-		frame.resetSong();
+	private void playSong() {}
+	
+	private void stopSong() {
 		for(MusicStream stream : streams) {
 			stream.resetStream();
 		}
 	}
 	
-	public void pauseSong() {
-		
-	}
+	private void pauseSong() {}
 	
-	public void frame() {
+	private void frame() {
 		boolean advanceOneTick = false;
 		tempoCounter += tempo;
 		if(tempoCounter > 0xFF) {
 			tempoCounter = 0;
 			advanceOneTick = true;
-			frame.advanceOneTick();
 		}
 		for(MusicStream stream : streams) {
 			stream.advanceFrame();
@@ -69,8 +66,11 @@ public class Song implements Notifiable {
 		case "STOP":
 			stopSong();
 			break;
-		}
-		
+		case "FRAME":
+			if(Notifier instanceof APU) {
+				frame();
+			}
+			break;
+		}	
 	}
-
 }
