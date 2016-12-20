@@ -26,6 +26,11 @@ public class PianoRollStream {
 		stream.addNote(notePos, noteValue, noteLength);
 	}
 	
+	public void addNoteToEnd(int y, int noteLength) {
+		stream.addNoteToEnd(y, noteLength);
+		
+	}
+	
 	public void paint(Graphics g, Point dims, int[] laneNums, int currentMarkerX) {
 		final ArrayList<Note> notes = stream.getNotes();
 		for(Note note : notes) {
@@ -41,5 +46,6 @@ public class PianoRollStream {
 		}
 		return noteLength;
 	}
+
 
 }

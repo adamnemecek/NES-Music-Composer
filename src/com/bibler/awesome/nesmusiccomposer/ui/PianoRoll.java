@@ -75,5 +75,19 @@ public class PianoRoll {
 		}
 		
 	}
+	
+	public void addNoteToEnd(int y, int noteLength, int voice) {
+		switch(voice) {
+		case 0:
+			square1Voice.addNoteToEnd(y, noteLength);
+			break;
+		case 1:
+			square2Voice.addNoteToEnd(y, noteLength);
+			break;
+		case 2:
+			triVoice.addNoteToEnd(y, noteLength);
+			break;
+		}
+	}
 
 }

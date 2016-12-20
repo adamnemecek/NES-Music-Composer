@@ -23,12 +23,15 @@ public class MusicStream {
 	private WaveGenerator stream;
 	private int streamIndex;
 	
+	private int currentEndPos;
+	
 	public MusicStream(int streamIndex) {
 		this.streamIndex = streamIndex;
 	}
 	
 	public void addNote(Note note) {
 		notes.add(note);
+		currentEndPos += note.getNoteLength();
 	}
 	
 	public void addNote(int notePos, int noteValue, int noteLength) {
@@ -44,6 +47,14 @@ public class MusicStream {
 			UpdateNoteCommand c = new UpdateNoteCommand(note, new Point(note.getNoteX(), noteValue));
 			UndoStack.executeAndStore(c);
 		}
+		
+	}
+	
+	public void addNoteToEnd(int y, int noteLength) {
+		Note note = new Note();
+		note.setLength(noteLength);
+		note.setNoteValues(currentEndPos, y);
+		addNote(note);
 		
 	}
 	
@@ -75,7 +86,9 @@ public class MusicStream {
 	}
 	
 	public void setNotes(ArrayList<Note> notes) {
-		this.notes = notes;
+		for(Note note : notes) {
+			addNote(note);
+		}
 	}
 	
 	public void setStream(WaveGenerator stream) {

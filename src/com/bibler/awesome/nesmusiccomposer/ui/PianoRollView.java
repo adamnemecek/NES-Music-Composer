@@ -35,8 +35,6 @@ public class PianoRollView extends JPanel {
 	
 	//Piano Roll
 	private PianoRoll roll;
-	private int currentLength = 4;
-	private int currentVoice = 0;
 	
 	//Parent
 	private JScrollPane scrollPane;
@@ -134,6 +132,11 @@ public class PianoRollView extends JPanel {
 		scrollPane.getHorizontalScrollBar().setValue(0);
 	}
 	
+	public void addNoteToEnd(Point inputPoint, int currentVoice, int currentNoteLength) {
+		final int y = ((viewHeight - inputPoint.y) / laneHeight) - 9;
+		roll.addNoteToEnd(y, currentNoteLength, currentVoice);
+	}
+	
 	private void scrollParent() {
 		scrollPane.getHorizontalScrollBar().setValue(currentMarkerX - 250); 
 	}
@@ -141,7 +144,7 @@ public class PianoRollView extends JPanel {
 	private void handleMouseClick(MouseEvent e) {
 		final int x = e.getX() / gridWidth;
 		final int y = ((viewHeight - e.getY()) / laneHeight) - 9;
-		roll.addNote(x, y, currentLength, currentVoice);
+		//roll.addNote(x, y, currentLength, currentVoice);
 	}
 	
 	private boolean scrolledDown;
