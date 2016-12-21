@@ -51,4 +51,8 @@ public class MainPanel extends JPanel {
 		return toolPanel.getTollbar();
 	}
 
+	public MainRollView getMainRollView() {
+		return pianoRoll;
+	}
+
 }

@@ -16,6 +16,10 @@ public class InputAction {
 		this.objectClicked = objectClicked;
 	}
 	
+	public void setId(int ID) {
+		this.ID = ID;
+	}
+	
 	public int getID() {
 		return ID;
 	}

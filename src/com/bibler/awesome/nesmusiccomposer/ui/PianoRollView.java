@@ -15,6 +15,9 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
+import com.bibler.awesome.nesmusiccomposer.systems.InputAction;
+import com.bibler.awesome.nesmusiccomposer.systems.InputManager;
+
 public class PianoRollView extends JPanel {
 	
 	/**
@@ -52,6 +55,8 @@ public class PianoRollView extends JPanel {
 	
 	private Rectangle bounds;
 	
+	private InputManager inputManager;
+	
 	public PianoRollView(int height) {
 		super();
 		addMouseListener(new PianoRollMouseListener());
@@ -62,7 +67,6 @@ public class PianoRollView extends JPanel {
 		viewHeight = height;
 		generateNoteLaneNumbers();
 		setPreferredSize(new Dimension(viewWidth, viewHeight));
-		
 		Thread t = new Thread(new Runnable() {
 
 			@Override
@@ -88,7 +92,8 @@ public class PianoRollView extends JPanel {
 	
 	public void setPianoRoll(PianoRoll roll) {
 		this.roll = roll;
-		updateViewWidth(roll.getTotalNoteLength());
+		//updateViewWidth(roll.getTotalNoteLength());
+		updateViewWidth(350);
 	}
 	
 	private void updateViewWidth(int totalNoteWidth) {
@@ -133,8 +138,8 @@ public class PianoRollView extends JPanel {
 	}
 	
 	public void addNoteToEnd(Point inputPoint, int currentVoice, int currentNoteLength) {
-		final int y = ((viewHeight - inputPoint.y) / laneHeight) - 9;
-		roll.addNoteToEnd(y, currentNoteLength, currentVoice);
+		//final int y = ((viewHeight - inputPoint.y) / laneHeight) - 9;
+		roll.addNoteToEnd(inputPoint.y, currentNoteLength, currentVoice);
 	}
 	
 	private void scrollParent() {
@@ -145,6 +150,7 @@ public class PianoRollView extends JPanel {
 		final int x = e.getX() / gridWidth;
 		final int y = ((viewHeight - e.getY()) / laneHeight) - 9;
 		//roll.addNote(x, y, currentLength, currentVoice);
+		inputManager.registerInputAction(new InputAction(InputManager.PIANO_ROLL_CLICKED, new Point(x, y), 0, this));
 	}
 	
 	private boolean scrolledDown;
@@ -231,6 +237,10 @@ public class PianoRollView extends JPanel {
 		@Override
 		public void mouseReleased(MouseEvent arg0) {}
 		
+	}
+
+	public void setInputManager(InputManager inputManager) {
+		this.inputManager = inputManager;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.bibler.awesome.nesmusiccomposer.audio;
 import java.util.ArrayList;
 
 import com.bibler.awesome.nesmusiccomposer.interfaces.Notifiable;
+import com.bibler.awesome.nesmusiccomposer.interfaces.Notifier;
 import com.bibler.awesome.nesmusiccomposer.systems.ClockRunner;
 import com.bibler.awesome.nesmusiccomposer.ui.MainFrame;
 

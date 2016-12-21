@@ -15,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SpringLayout;
 
+import com.bibler.awesome.nesmusiccomposer.systems.InputManager;
+
 public class MainRollView extends JPanel {
 	
 	private JScrollPane leftScroll;
@@ -26,9 +28,16 @@ public class MainRollView extends JPanel {
 	private int imageWidth;
 	private int imageHeight;
 	
+	private InputManager inputManager;
+	
 	public MainRollView() {
 		super();
 		initialize();
+	}
+	
+	public void setInputManager(InputManager inputManager) {
+		this.inputManager = inputManager;
+		pianoRoll.setInputManager(inputManager);
 	}
 	
 	private void initialize() {
@@ -55,7 +64,7 @@ public class MainRollView extends JPanel {
 	}
 	
 	public void advanceOneTick() {
-		pianoRoll.advanceOneTick();
+		//pianoRoll.advanceOneTick();
 	}
 	
 	private class ImagePanel extends JPanel {

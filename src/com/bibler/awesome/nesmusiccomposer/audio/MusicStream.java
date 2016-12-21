@@ -51,6 +51,7 @@ public class MusicStream {
 	}
 	
 	public void addNoteToEnd(int y, int noteLength) {
+		System.out.println("Added note at pos " + currentEndPos + " and value " + y);
 		Note note = new Note();
 		note.setLength(noteLength);
 		note.setNoteValues(currentEndPos, y);

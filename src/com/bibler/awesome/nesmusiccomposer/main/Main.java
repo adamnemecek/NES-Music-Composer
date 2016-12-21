@@ -4,6 +4,8 @@ import com.bibler.awesome.nesmusiccomposer.audio.APU;
 import com.bibler.awesome.nesmusiccomposer.audio.MusicStream;
 import com.bibler.awesome.nesmusiccomposer.audio.Song;
 import com.bibler.awesome.nesmusiccomposer.systems.ClockRunner;
+import com.bibler.awesome.nesmusiccomposer.systems.CompositionManager;
+import com.bibler.awesome.nesmusiccomposer.systems.InputManager;
 import com.bibler.awesome.nesmusiccomposer.systems.SongManager;
 import com.bibler.awesome.nesmusiccomposer.ui.MainFrame;
 import com.bibler.awesome.nesmusiccomposer.ui.PianoRoll;
@@ -82,6 +84,14 @@ public class Main {
 		
 		manager.setCurrentSong(song);
 		frame.getToolbar().registerObjectToNotify(manager);
+		
+		CompositionManager compManager = new CompositionManager();
+		compManager.setStream(square1, 0);
+		compManager.setStream(square2, 1);
+		compManager.setStream(tri, 2);
+		InputManager inputManager = new InputManager();
+		inputManager.registerObjectToNotify(compManager);
+		frame.getMainRollView().setInputManager(inputManager);
 	}
 
 }

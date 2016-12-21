@@ -69,4 +69,8 @@ public class MainFrame extends JFrame implements Notifiable {
 		}
 	}
 
+	public MainRollView getMainRollView() {
+		return mainPanel.getMainRollView();
+	}
+
 }
