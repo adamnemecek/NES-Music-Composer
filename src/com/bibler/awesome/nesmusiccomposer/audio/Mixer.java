@@ -115,9 +115,7 @@ public class Mixer  {
 	
 	public void flushSamples() {
 		if(audioEnabled) {
-			if(player.available() >= sampleBufferIndex) {
-				player.write(sampleBuffer, 0, sampleBufferIndex);
-			}
+			player.write(sampleBuffer, 0, sampleBufferIndex);
 			sampleBufferIndex = 0;
 		}
 	}
@@ -135,6 +133,7 @@ public class Mixer  {
 		final float size = player.getBufferSize();
 		final float avail = player.available();
 		final float used = size - avail;
+		System.out.println("Buffer usage: " + ((used / size) * 100));
 		return used / size;
 	}
 	

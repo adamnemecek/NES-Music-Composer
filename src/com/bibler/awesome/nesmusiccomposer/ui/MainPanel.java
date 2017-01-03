@@ -1,6 +1,7 @@
 package com.bibler.awesome.nesmusiccomposer.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -25,13 +26,15 @@ public class MainPanel extends JPanel {
 	}
 	
 	private void initialize() {
-		pianoRoll = new MainRollView();
-		songPanel = new SongPanel();
-		toolPanel = new ToolPanel();
-		statusPanel = new StatusPanel();
+		Color bg = new Color(192, 192, 192);
+		pianoRoll = new MainRollView(bg);
+		songPanel = new SongPanel(bg);
+		toolPanel = new ToolPanel(bg);
+		statusPanel = new StatusPanel(bg);
 		middlePane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, songPanel, pianoRoll);
-		
 		initializeLayout();
+		toolPanel.getToolbar().registerObjectToNotify(frame);
+		setBackground(bg);
 	}
 	
 	private void initializeLayout() {
@@ -48,7 +51,7 @@ public class MainPanel extends JPanel {
 	}
 
 	public ToolBar getToolbar() {
-		return toolPanel.getTollbar();
+		return toolPanel.getToolbar();
 	}
 
 	public MainRollView getMainRollView() {

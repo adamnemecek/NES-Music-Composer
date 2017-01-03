@@ -1,6 +1,7 @@
 package com.bibler.awesome.nesmusiccomposer.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JPanel;
@@ -11,19 +12,20 @@ public class ToolPanel extends JPanel {
 	
 	private ToolBar toolbar;
 	
-	public ToolPanel() {
+	public ToolPanel(Color bg) {
 		super();
-		initialize();
+		initialize(bg);
 	}
 	
-	private void initialize() {
+	private void initialize(Color bg) {
 		setPreferredSize(new Dimension(800, 50));
-		toolbar = new ToolBar(700, 25, null);
+		toolbar = new ToolBar(700, 25, null, bg);
 		setLayout(new BorderLayout());
 		add(toolbar, BorderLayout.WEST);
+		setBackground(bg);
 	}
 
-	public ToolBar getTollbar() {
+	public ToolBar getToolbar() {
 		return toolbar;
 	}
 

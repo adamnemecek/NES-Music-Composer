@@ -32,7 +32,7 @@ public class MusicStreamCreator {
 		for(int i = 0; i < noteValues.length; i++) {
 			currentByte = noteValues[i];
 			if(currentByte < 0x80) {
-				note = new Note();
+				note = NoteFactory.createNote(currentNotePosX, currentByte, currentNoteLengthIndex, stream.getStreamIndex());
 				note.setColor(color);
 				note.setLength(currentNoteLengthIndex);
 				note.setPos(currentNotePosX, currentByte);

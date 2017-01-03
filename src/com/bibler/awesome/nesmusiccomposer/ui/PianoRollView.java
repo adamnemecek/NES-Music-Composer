@@ -13,12 +13,15 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
+import com.bibler.awesome.nesmusiccomposer.audio.Note;
+import com.bibler.awesome.nesmusiccomposer.interfaces.Notifiable;
 import com.bibler.awesome.nesmusiccomposer.systems.InputAction;
 import com.bibler.awesome.nesmusiccomposer.systems.InputManager;
 
-public class PianoRollView extends JPanel {
+public class PianoRollView extends JPanel implements Notifiable {
 	
 	/**
 	 * 
@@ -30,6 +33,8 @@ public class PianoRollView extends JPanel {
 	private int gridWidth;
 	private int laneHeight;
 	private Point dims;
+	
+	private int scrollX = 0;
 	
 	//frames
 	private int numFrames;
@@ -72,11 +77,7 @@ public class PianoRollView extends JPanel {
 			@Override
 			public void run() {
 				while(true) {
-					
 					repaint();
-					if(currentMarkerX > 250) {
-						scrollParent();
-					}
 					try {
 						Thread.sleep(10);
 					} catch(InterruptedException e) {}
@@ -92,13 +93,38 @@ public class PianoRollView extends JPanel {
 	
 	public void setPianoRoll(PianoRoll roll) {
 		this.roll = roll;
-		//updateViewWidth(roll.getTotalNoteLength());
-		updateViewWidth(350);
+		updateNumFrames();
+		scrollToStart();
+	}
+	
+	public void registerKeyboard(Keyboard keyboard) {
+		roll.registerKeyboard(keyboard);
 	}
 	
 	private void updateViewWidth(int totalNoteWidth) {
 		viewWidth = gridWidth * totalNoteWidth;
 		setPreferredSize(new Dimension(viewWidth, viewHeight));
+		revalidate();
+		scrollToEnd();
+	}
+	
+	private void scrollToEnd() {
+		JScrollBar horiz = scrollPane.getHorizontalScrollBar();
+		if(horiz.isEnabled()) {
+			horiz.setValue(Integer.MAX_VALUE);
+		}
+	}
+	
+	private void scrollToStart() {
+		scrollPane.getHorizontalScrollBar().setValue(0);
+	}
+	
+	private void scrollToOctave(int octave) {
+		octave = (9 - octave) * 168;
+		int height  = scrollPane.getHeight();
+		Rectangle rect = getVisibleRect();
+		rect.setLocation(rect.x, ( (octave - (height / 2)) + (168 / 2))  );
+		scrollRectToVisible(rect);
 	}
 	
 	public void setGridWidth(int gridWidth) {
@@ -120,37 +146,82 @@ public class PianoRollView extends JPanel {
 		generateNoteLaneNumbers();
 	}
 	
+	public void setNumFrames(int numFrames) {
+		this.numFrames = numFrames;
+		gridLines = numFrames * frameSizeInQuarterNotes * 8;
+		updateViewWidth(numFrames * frameSizeInQuarterNotes);
+	}
+	
 	public void addFrame() {
 		numFrames++;
 		gridLines = numFrames * frameSizeInQuarterNotes * 8;
 	}
 	
+	public void updateNumFrames() {
+		int numFrames = (roll.getTotalNoteLength() / 64) + 1;
+		setNumFrames(numFrames);
+	}
+	
 	public void advanceOneTick() {
-		currentMarkerX += gridWidth;
-		if(currentMarkerX >= viewWidth) {
-			resetSong();
-		}
+		scrollX -= gridWidth;
 	}
 	
 	public void resetSong() {
 		currentMarkerX = 0;
 		scrollPane.getHorizontalScrollBar().setValue(0);
+		scrollX = 0;
 	}
 	
-	public void addNoteToEnd(Point inputPoint, int currentVoice, int currentNoteLength) {
-		//final int y = ((viewHeight - inputPoint.y) / laneHeight) - 9;
-		roll.addNoteToEnd(inputPoint.y, currentNoteLength, currentVoice);
+	public void play() {
+		scrollX = 0;
+		scrollToStart();
+		setScrollEnabled(false);
 	}
 	
-	private void scrollParent() {
-		scrollPane.getHorizontalScrollBar().setValue(currentMarkerX - 250); 
+	public void stop() {
+		setScrollEnabled(true);
+	}
+	
+	public void pause() {
+		setScrollEnabled(true);
+	}
+	
+	public void setScrollEnabled(boolean enabled) {
+		scrollPane.getHorizontalScrollBar().setEnabled(enabled);
+	}
+	
+	public Note addNoteToEnd(Point inputPoint, int currentVoice, int currentNoteLength) {
+		Note note = roll.addNoteToEnd(inputPoint.y, currentNoteLength, currentVoice);
+		updateNumFrames();
+		return note;
+	}
+	
+	public Note addNoteInPlace(Point inputPos, int currentVoice, int currentNoteLength) {
+		Note note = roll.addNoteInPlace(inputPos, currentVoice, currentNoteLength);
+		updateNumFrames();
+		return note;
+	}
+	
+	public void removeNote(Point inputPos, int currentVoice) {
+		roll.removeNote(inputPos, currentVoice);
+		updateNumFrames();
 	}
 	
 	private void handleMouseClick(MouseEvent e) {
 		final int x = e.getX() / gridWidth;
-		final int y = ((viewHeight - e.getY()) / laneHeight) - 9;
-		//roll.addNote(x, y, currentLength, currentVoice);
-		inputManager.registerInputAction(new InputAction(InputManager.PIANO_ROLL_CLICKED, new Point(x, y), 0, this));
+		final int y = ((viewHeight - e.getY()) / laneHeight);
+		Note note = checkForNoteClick(x, y);
+		if(note == null) {
+			inputManager.registerInputAction(
+					new InputAction(InputManager.PIANO_ROLL_CLICKED, new Point(x, y), 0, this));
+		} else {
+			inputManager.registerInputAction(
+					new InputAction(InputManager.NOTE_CLICKED, new Point(x,  y), 0, note));
+		}
+	}
+	
+	private Note checkForNoteClick(int x, int y) {
+		return roll.checkForNoteClick(x, y);
 	}
 	
 	private boolean scrolledDown;
@@ -158,7 +229,7 @@ public class PianoRollView extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		if(!scrolledDown) {
-			scrollPane.getVerticalScrollBar().setValue(1270);
+			scrollPane.getVerticalScrollBar().setValue(viewHeight / 2);
 			scrolledDown = true;
 		}
 		super.paintComponent(g);
@@ -185,7 +256,7 @@ public class PianoRollView extends JPanel {
 		paintLanes(g);
 		paintGrid(g);
 		if(roll != null) {
-			roll.paint(g, dims, noteLaneNumbers, currentMarkerX);
+			roll.paint(g, dims, noteLaneNumbers, currentMarkerX, scrollX);
 		}
 		paintMarker(g);
 	}
@@ -198,9 +269,9 @@ public class PianoRollView extends JPanel {
 			if(octaveCount > 11) {
 				octaveCount = 0;
 			}
-			g.fillRect(0, (i * laneHeight), viewWidth, laneHeight);
+			g.fillRect(0, (i * laneHeight), gridLines * gridWidth, laneHeight);
 			g.setColor(gridLineColor);
-			g.drawLine(0, (i * laneHeight), viewWidth, (i * laneHeight));
+			g.drawLine(0, (i * laneHeight), gridLines * gridWidth, (i * laneHeight));
 		}
 	}
 	
@@ -241,6 +312,15 @@ public class PianoRollView extends JPanel {
 
 	public void setInputManager(InputManager inputManager) {
 		this.inputManager = inputManager;
+	}
+
+	@Override
+	public void takeNotice(String message, Object Notifier) {
+		if(message.contains("OCTAVE")) {
+			int octave = Integer.parseInt(message.split(":")[1]);
+			scrollToOctave(octave);
+		}
+		
 	}
 
 }

@@ -15,12 +15,18 @@ public class UndoStack {
 	}
 	
 	public static void undo() {
+		if(undo.isEmpty()) {
+			return;
+		}
 		Command c = undo.pop();
 		redo.push(c);
 		c.undo();
 	}
 	
 	public static void redo() {
+		if(redo.isEmpty()) {
+			return;
+		}
 		Command c = redo.pop();
 		undo.push(c);
 		c.redo();

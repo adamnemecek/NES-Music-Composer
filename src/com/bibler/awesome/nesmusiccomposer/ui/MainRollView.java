@@ -1,6 +1,7 @@
 package com.bibler.awesome.nesmusiccomposer.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridBagConstraints;
@@ -22,17 +23,17 @@ public class MainRollView extends JPanel {
 	private JScrollPane leftScroll;
 	private JScrollPane rightScroll;
 	
-	private ImagePanel imagePanel;
 	private PianoRollView pianoRoll;
 	
 	private int imageWidth;
 	private int imageHeight;
 	
+	private Keyboard keyboard;
 	private InputManager inputManager;
 	
-	public MainRollView() {
+	public MainRollView(Color bg) {
 		super();
-		initialize();
+		initialize(bg);
 	}
 	
 	public void setInputManager(InputManager inputManager) {
@@ -40,15 +41,16 @@ public class MainRollView extends JPanel {
 		pianoRoll.setInputManager(inputManager);
 	}
 	
-	private void initialize() {
+	private void initialize(Color bg) {
+		setBackground(bg);
 		setPreferredSize(new Dimension(800, 500));
-		imagePanel = new ImagePanel(new File("C:/Users/rbibl/workspace/NES-Music-Composer/files/keyboard.png"));
-		imageWidth = imagePanel.getPanelWidth();
-		imageHeight = imagePanel.getPanelHeight();
+		keyboard = new Keyboard();
+		imageWidth = keyboard.getPanelWidth();
+		imageHeight = keyboard.getPanelHeight();
 		pianoRoll = new PianoRollView(imageHeight);
 		pianoRoll.setGridWidth(10);
 		pianoRoll.setLaneHeight(14);
-		leftScroll = new JScrollPane(imagePanel, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		leftScroll = new JScrollPane(keyboard, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		rightScroll = new JScrollPane(pianoRoll);
 		leftScroll.setPreferredSize(new Dimension(imageWidth, 500));
 		rightScroll.setPreferredSize(new Dimension(800 - imageWidth, 500));
@@ -66,39 +68,9 @@ public class MainRollView extends JPanel {
 	public void advanceOneTick() {
 		//pianoRoll.advanceOneTick();
 	}
-	
-	private class ImagePanel extends JPanel {
-		private BufferedImage image;
-		
-		private int panelWidth;
-		private int panelHeight;
-		
-		public ImagePanel(File f) {
-			super();
-			loadImage(f);
-			setPreferredSize(new Dimension(panelWidth, panelHeight));
-		}
-		
-		public int getPanelWidth() {
-			return panelWidth;
-		}
-		
-		public int getPanelHeight() {
-			return panelHeight;
-		}
-		
-		private void loadImage(File f) {
-			try {
-				image = ImageIO.read(f);
-				panelWidth = image.getWidth();
-				panelHeight = image.getHeight();
-			} catch(IOException e) {}
-		}
-		
-		@Override
-		public void paintComponent(Graphics g) {
-			g.drawImage(image, 0, 0, null);
-		}
+
+	public Keyboard getKeyboard() {
+		return keyboard;
 	}
 
 }

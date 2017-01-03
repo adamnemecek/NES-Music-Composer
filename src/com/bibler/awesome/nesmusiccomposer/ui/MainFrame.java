@@ -1,5 +1,9 @@
 package com.bibler.awesome.nesmusiccomposer.ui;
 
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -7,6 +11,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import com.bibler.awesome.nesmusiccomposer.audio.APU;
 import com.bibler.awesome.nesmusiccomposer.interfaces.Notifiable;
 import com.bibler.awesome.nesmusiccomposer.menus.MainFrameMenu;
+import com.bibler.awesome.nesmusiccomposer.systems.SongManager;
 import com.bibler.awesome.nesmusiccomposer.toolbars.ToolBar;
 import com.bibler.awesome.nesmusiccomposer.utils.UndoStack;
 
@@ -29,6 +34,7 @@ public class MainFrame extends JFrame implements Notifiable {
 		setExtendedState(getExtendedState()|JFrame.MAXIMIZED_BOTH );
 		pack();
 		setVisible(true);
+		
 	}
 	
 	public void advanceOneTick() {
@@ -50,6 +56,10 @@ public class MainFrame extends JFrame implements Notifiable {
 	public void resetSong() {
 		getPianoRollView().resetSong();
 	}
+	
+	public void playSong() {
+		getPianoRollView().play();
+	}
 
 	public ToolBar getToolbar() {
 		return mainPanel.getToolbar();
@@ -58,19 +68,26 @@ public class MainFrame extends JFrame implements Notifiable {
 	@Override
 	public void takeNotice(String message, Object Notifier) {
 		switch(message) {
-		case "FRAME":
-			if(Notifier instanceof APU) {
+		case "ADVANCE_TICK":
+			if(Notifier instanceof SongManager) {
 				advanceOneTick();
 			}
 			break;
 		case "STOP":
+		case "RESET":
 			resetSong();
 			break;
+		case "PLAY":
+			playSong();
 		}
 	}
 
 	public MainRollView getMainRollView() {
 		return mainPanel.getMainRollView();
+	}
+
+	public Keyboard getKeyboard() {
+		return getMainRollView().getKeyboard();
 	}
 
 }

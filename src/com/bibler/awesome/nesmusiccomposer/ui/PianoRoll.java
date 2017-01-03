@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 
 import com.bibler.awesome.nesmusiccomposer.audio.MusicStream;
+import com.bibler.awesome.nesmusiccomposer.audio.Note;
 import com.bibler.awesome.nesmusiccomposer.audio.Song;
 
 public class PianoRoll {
@@ -48,6 +49,17 @@ public class PianoRoll {
 		return null;
 	}
 	
+	public Note checkForNoteClick(int x, int y) {
+		Note n = square1Voice.checkForNoteClick(x, y);
+		if(n == null) {
+			n = square2Voice.checkForNoteClick(x, y);
+			if(n == null) {
+				n = triVoice.checkForNoteClick(x, y);
+			}
+		}
+		return n;
+	}
+	
 	public int getTotalNoteLength() {
 		final int square1VoiceLength = square1Voice != null ? square1Voice.getTotalNoteLength() : 0;
 		final int square2VoiceLength = square2Voice != null ? square2Voice.getTotalNoteLength() : 0;
@@ -55,39 +67,64 @@ public class PianoRoll {
 		return Math.max(Math.max(square1VoiceLength, square2VoiceLength), triVoiceLength);
 	}
 	
-	public void paint(Graphics g, Point dims, int[] noteLaneNumbers, int currentMarkerX) {
-		square1Voice.paint(g, dims, noteLaneNumbers, currentMarkerX);
-		square2Voice.paint(g, dims, noteLaneNumbers, currentMarkerX);
-		triVoice.paint(g, dims, noteLaneNumbers, currentMarkerX);
+	public void paint(Graphics g, Point dims, int[] noteLaneNumbers, int currentMarkerX, int scrollX) {
+		square1Voice.paint(g, dims, noteLaneNumbers, currentMarkerX, scrollX);
+		square2Voice.paint(g, dims, noteLaneNumbers, currentMarkerX, scrollX);
+		triVoice.paint(g, dims, noteLaneNumbers, currentMarkerX, scrollX);
 	}
-
-	public void addNote(int x, int y, int currentLength, int currentVoice) {
-		switch(currentVoice) {
+	
+	public Note addNoteToEnd(int y, int noteLength, int voice) {
+		Note note = null;
+		switch(voice) {
 		case 0:
-			square1Voice.addNote(x, y, currentLength);
+			note = square1Voice.addNoteToEnd(y, noteLength);
 			break;
 		case 1:
-			square2Voice.addNote(x, y, currentLength);
+			note = square2Voice.addNoteToEnd(y, noteLength);
 			break;
-		case 3:
-			triVoice.addNote(x, y, currentLength);
+		case 2:
+			note = triVoice.addNoteToEnd(y, noteLength);
+			break;
+		}
+		return note;
+	}
+	
+	public Note addNoteInPlace(Point inputPos, int currentVoice, int currentNoteLength) {
+		Note note = null;
+		switch(currentVoice) {
+		case 0:
+			note = square1Voice.addNoteInPlace(inputPos, currentNoteLength);
+			break;
+		case 1:
+			note = square2Voice.addNoteInPlace(inputPos, currentNoteLength);
+			break;
+		case 2:
+			note = triVoice.addNoteInPlace(inputPos, currentNoteLength);
+			break;
+		}
+		return note;
+	}
+
+	public void removeNote(Point inputPos, int currentVoice) {
+		switch(currentVoice) {
+		case 0:
+			square1Voice.removeNote(inputPos);
+			break;
+		case 1:
+			square2Voice.removeNote(inputPos);
+			break;
+		case 2:
+			triVoice.removeNote(inputPos);
 			break;
 		}
 		
 	}
-	
-	public void addNoteToEnd(int y, int noteLength, int voice) {
-		switch(voice) {
-		case 0:
-			square1Voice.addNoteToEnd(y, noteLength);
-			break;
-		case 1:
-			square2Voice.addNoteToEnd(y, noteLength);
-			break;
-		case 2:
-			triVoice.addNoteToEnd(y, noteLength);
-			break;
-		}
+
+	public void registerKeyboard(Keyboard keyboard) {
+		square1Voice.registerObjectToNotify(keyboard);
+		square2Voice.registerObjectToNotify(keyboard);
+		triVoice.registerObjectToNotify(keyboard);
+		
 	}
 
 }

@@ -2,19 +2,23 @@ package com.bibler.awesome.nesmusiccomposer.audio;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 import com.bibler.awesome.nesmusiccomposer.commands.UpdateNoteCommand;
+import com.bibler.awesome.nesmusiccomposer.utils.NoteComparator;
+import com.bibler.awesome.nesmusiccomposer.utils.NoteFactory;
 import com.bibler.awesome.nesmusiccomposer.utils.UndoStack;
 
 public class MusicStream {
 	
 	private int currentNoteLength;
 	private int streamNoteLengthCounter;
-	private int currentPeriod;
-	private int currentVolumeEnvelope;
 	private int frameCounter;
 	
-	private Envelope envelope;
+	private InstrumentManager instrumentManager = new InstrumentManager();
+	
+	private Instrument currentInstrument;
 	
 	private ArrayList<Note> notes = new ArrayList<Note>();
 	
@@ -24,66 +28,112 @@ public class MusicStream {
 	private int streamIndex;
 	
 	private int currentEndPos;
+	private int currentNotePos;
+	private boolean moreNotes = true;
+	private int currentFrameNumber;
+	private Song song;
+	
+	private NoteComparator comparator = new NoteComparator();
 	
 	public MusicStream(int streamIndex) {
 		this.streamIndex = streamIndex;
 	}
 	
+	public void setSong(Song song) {
+		this.song = song;
+	}
+	
+	public int getStreamLength() {
+		return currentEndPos;
+	}
+	
+	public void addInstrument(Instrument inst) {
+		instrumentManager.addInstrument(inst);
+	}
+	
 	public void addNote(Note note) {
 		notes.add(note);
-		currentEndPos += note.getNoteLength();
-	}
-	
-	public void addNote(int notePos, int noteValue, int noteLength) {
-		Note note = findNoteByValue(notePos);
-		if(note == null) {
-			note = new Note();
-			note.setLength(noteLength);
-			note.setNoteValues(notePos, noteValue);
-			System.out.println("creating a note");
-			slotNote(note);
-		} else {
-			System.out.println("Setting an note");
-			UpdateNoteCommand c = new UpdateNoteCommand(note, new Point(note.getNoteX(), noteValue));
-			UndoStack.executeAndStore(c);
+		calculateCurrentEndPos();
+		if(song != null) {
+			song.updateSongLength(currentEndPos);
 		}
-		
+		note.setParentStream(this);
 	}
 	
-	public void addNoteToEnd(int y, int noteLength) {
+	public Note addNoteToEnd(int y, int noteLength) {
 		System.out.println("Added note at pos " + currentEndPos + " and value " + y);
-		Note note = new Note();
-		note.setLength(noteLength);
-		note.setNoteValues(currentEndPos, y);
+		Note note = NoteFactory.createNote(currentEndPos, y, noteLength, getStreamIndex());
 		addNote(note);
-		
+		return note;
+	}
+	
+	public Note addNoteInPlace(Point notePos, int noteLength) {
+		Note note = NoteFactory.createNote(notePos.x, notePos.y, noteLength, getStreamIndex());
+		if(checkForFit(note)) {
+			addNote(note);
+			return note;
+		}
+		return null;
+	}
+	
+	private boolean checkForFit(Note note) {
+		boolean fit = true;
+		int noteToCheckStartX;
+		int noteToCheckEndX;
+		int noteX = note.getNoteX();
+		int noteEndX = note.getNoteLength() + noteX;
+		for(Note noteToCheck : notes) {
+			noteToCheckStartX = noteToCheck.getNoteX();
+			noteToCheckEndX = noteToCheckStartX + noteToCheck.getNoteLength();
+			if(noteX >= noteToCheckStartX && noteX < noteToCheckEndX) {
+				fit = false;
+				break;
+			} else if(noteEndX > noteToCheckStartX && noteEndX < noteToCheckEndX) {
+				fit = false;
+				break;
+			}
+		}
+		return fit;
+	}
+	
+	public void removeNote(Point inputPos) {
+		for(Note note : notes) {
+			if(note.matchesValues(inputPos)) {
+				notes.remove(note);
+				break;
+			}
+		}
+		calculateCurrentEndPos();
+	}
+	
+	public void removeNote(Note note) {
+		notes.remove(note);
+		calculateCurrentEndPos();
+	}
+	
+	public void updateTotalLength() {
+		calculateCurrentEndPos();
+		song.updateSongLength(getStreamLength());
+	}
+	
+	private void orderNotes() {
+		Collections.sort(notes, comparator);
+	}
+	
+	private void calculateCurrentEndPos() {
+		orderNotes();
+		currentEndPos = 0;
+		currentEndPos = notes.get(notes.size() - 1).getNoteEndPos();
 	}
 	
 	public void resetStream() {
 		frameCounter = 0;
-	}
-	
-	private void slotNote(Note note) {
-		int noteToCompareX;
-		int noteX = note.getNoteX();
-		int currentIndex = 0;
-		for(Note noteToCompare : notes) {
-			noteToCompareX = noteToCompare.getNoteX();
-			if(noteX <= noteToCompareX) {
-				notes.add(currentIndex, note);
-				return;
-			}
-			currentIndex++;
-		}
-	}
-	
-	private Note findNoteByValue(int notePos) {
-		for(Note note : notes) {
-			if(note.posFallsWithin(notePos)) {
-				return note;
-			}
-		}
-		return null;
+		streamNoteLengthCounter = 0;
+		currentNoteLength = 0;
+		moreNotes = true;
+		currentNotePos = 0;
+		currentFrameNumber = 0;
+		advanceInstrumentCounter();
 	}
 	
 	public void setNotes(ArrayList<Note> notes) {
@@ -96,21 +146,25 @@ public class MusicStream {
 		this.stream = stream;
 	}
 	
-	public void setEnvelope(Envelope envelope) {
-		this.envelope = envelope;
+	public void setEnvelope(Instrument envelope) {
+		this.currentInstrument = envelope;
 	}
 	
 	public void advanceFrame() {
 		if(!enabled) {
 			return;
 		}
-		if(envelope != null) {
-			stream.setVolume(envelope.nextValue());
+		if(currentInstrument != null) {
+			final int vol = currentInstrument.nextValue();
+			stream.setVolume(vol);
+			stream.setDuty(currentInstrument.nextDuty());
 		}
 	}
 	
 	public void advanceOneTick() {
 		advanceNoteCounter();
+		advanceInstrumentCounter();
+		currentFrameNumber++;
 	}
 	
 	private void advanceNoteCounter() {
@@ -119,20 +173,38 @@ public class MusicStream {
 			streamNoteLengthCounter = currentNoteLength;
 			fetchNextByte();
 		}
+		currentNotePos++;
+	}
+	
+	private void advanceInstrumentCounter() {
+		currentInstrument = instrumentManager.getInstrument(currentFrameNumber);
+		System.out.println("Updated instrument to: " + currentInstrument.getInstrumentName());
 	}
 	
 	private void fetchNextByte() {
-		Note nextNote = notes.get(frameCounter++);
-		processNote(nextNote);
-		processNoteLength(nextNote);
 		if(frameCounter >= notes.size()) {
-			frameCounter = 0;
+			setRest();
+		} else {
+			Note nextNote = notes.get(frameCounter);
+			if(nextNote.getNoteX() == currentNotePos) {
+				processNote(nextNote);
+				processNoteLength(nextNote);
+				frameCounter++;
+			} else {
+				setRest();
+			}
 		}
 	}
 	
+	private void setRest() {
+		stream.setPeriod(0);
+		currentNoteLength = 0;
+		streamNoteLengthCounter = 0;
+	}
+	
 	private void processNote(Note note) {
-		if(envelope != null) {
-			envelope.reset();
+		if(currentInstrument != null) {
+			currentInstrument.reset();
 		}
 		stream.setPeriod(note.getNotePeriod());
 	}
@@ -149,6 +221,15 @@ public class MusicStream {
 	
 	public ArrayList<Note> getNotes() {
 		return notes;
+	}
+
+	public Note checkForNoteClick(int x, int y) {
+		for(Note n : notes) {
+			if(n.checkForClick(x, y)) {
+				return n;
+			}
+		}
+		return null;
 	}
 
 }
