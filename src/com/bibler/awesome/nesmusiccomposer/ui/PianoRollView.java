@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -47,6 +49,9 @@ public class PianoRollView extends JPanel implements Notifiable {
 	//Parent
 	private JScrollPane scrollPane;
 	
+	//Instrument View
+	private InstrumentAndEffectsView instrumentView;
+	
 	private int[] noteLaneNumbers = new int[95];
 	
 	private final Color[] laneColors = new Color[] {
@@ -72,6 +77,26 @@ public class PianoRollView extends JPanel implements Notifiable {
 		viewHeight = height;
 		generateNoteLaneNumbers();
 		setPreferredSize(new Dimension(viewWidth, viewHeight));
+		addComponentListener(new ComponentListener() {
+
+			@Override
+			public void componentHidden(ComponentEvent arg0) {}
+
+			@Override
+			public void componentMoved(ComponentEvent arg0) {}
+
+			@Override
+			public void componentResized(ComponentEvent arg0) {
+				if(instrumentView != null) {
+					instrumentView.setPreferredSize(new Dimension(getPreferredSize().width, 200));
+				}
+			}
+
+			@Override
+			public void componentShown(ComponentEvent arg0) {}
+			
+		});
+		
 		Thread t = new Thread(new Runnable() {
 
 			@Override
@@ -85,6 +110,7 @@ public class PianoRollView extends JPanel implements Notifiable {
 			}
 		});
 		t.start();
+		
 	}
 	
 	public void setScrollPane(JScrollPane scrollPane) {
@@ -95,6 +121,10 @@ public class PianoRollView extends JPanel implements Notifiable {
 		this.roll = roll;
 		updateNumFrames();
 		scrollToStart();
+	}
+	
+	public void setInstrumentView(InstrumentAndEffectsView instrumentView) {
+		this.instrumentView = instrumentView;
 	}
 	
 	public void registerKeyboard(Keyboard keyboard) {

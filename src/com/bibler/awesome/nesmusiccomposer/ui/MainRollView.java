@@ -22,8 +22,10 @@ public class MainRollView extends JPanel {
 	
 	private JScrollPane leftScroll;
 	private JScrollPane rightScroll;
+	private JScrollPane instrumentScroll;
 	
 	private PianoRollView pianoRoll;
+	private InstrumentAndEffectsView instrumentView;
 	
 	private int imageWidth;
 	private int imageHeight;
@@ -56,9 +58,14 @@ public class MainRollView extends JPanel {
 		rightScroll.setPreferredSize(new Dimension(800 - imageWidth, 500));
 		leftScroll.getVerticalScrollBar().setModel(rightScroll.getVerticalScrollBar().getModel());
 		pianoRoll.setScrollPane(rightScroll);
+		instrumentView = new InstrumentAndEffectsView();
+		pianoRoll.setInstrumentView(instrumentView);
+		instrumentScroll = new JScrollPane(instrumentView, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		instrumentScroll.getHorizontalScrollBar().setModel(rightScroll.getHorizontalScrollBar().getModel());
 		setLayout(new BorderLayout());
 		add(leftScroll, BorderLayout.LINE_START);
 		add(rightScroll, BorderLayout.CENTER);
+		add(instrumentScroll, BorderLayout.SOUTH);
 	}
 	
 	public PianoRollView getPianoRollView() {
