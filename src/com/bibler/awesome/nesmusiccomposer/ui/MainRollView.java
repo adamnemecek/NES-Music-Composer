@@ -22,10 +22,9 @@ public class MainRollView extends JPanel {
 	
 	private JScrollPane leftScroll;
 	private JScrollPane rightScroll;
-	private JScrollPane instrumentScroll;
 	
 	private PianoRollView pianoRoll;
-	private InstrumentAndEffectsView instrumentView;
+	private VoiceAndInstrumentPanel voiceAndInstrumentPanel;
 	
 	private int imageWidth;
 	private int imageHeight;
@@ -53,19 +52,18 @@ public class MainRollView extends JPanel {
 		pianoRoll.setGridWidth(10);
 		pianoRoll.setLaneHeight(14);
 		leftScroll = new JScrollPane(keyboard, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		rightScroll = new JScrollPane(pianoRoll);
+		rightScroll = new JScrollPane(pianoRoll, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		leftScroll.setPreferredSize(new Dimension(imageWidth, 500));
 		rightScroll.setPreferredSize(new Dimension(800 - imageWidth, 500));
 		leftScroll.getVerticalScrollBar().setModel(rightScroll.getVerticalScrollBar().getModel());
 		pianoRoll.setScrollPane(rightScroll);
-		instrumentView = new InstrumentAndEffectsView();
-		pianoRoll.setInstrumentView(instrumentView);
-		instrumentScroll = new JScrollPane(instrumentView, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		instrumentScroll.getHorizontalScrollBar().setModel(rightScroll.getHorizontalScrollBar().getModel());
+		voiceAndInstrumentPanel = new VoiceAndInstrumentPanel();
+		pianoRoll.setInstrumentView(voiceAndInstrumentPanel.getInstrumentAndEffectsView());
+		rightScroll.getHorizontalScrollBar().setModel(voiceAndInstrumentPanel.getInstrumentScroll().getHorizontalScrollBar().getModel());
 		setLayout(new BorderLayout());
 		add(leftScroll, BorderLayout.LINE_START);
 		add(rightScroll, BorderLayout.CENTER);
-		add(instrumentScroll, BorderLayout.SOUTH);
+		add(voiceAndInstrumentPanel, BorderLayout.SOUTH);
 	}
 	
 	public PianoRollView getPianoRollView() {

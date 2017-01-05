@@ -72,7 +72,7 @@ public class ToolBar extends JToolBar implements Notifier, Notifiable {
 	private int width;
 	private int height;
 	
-	private final String iconRoot = "C:/users/rbibl/workspace/NES-Music-Composer/files/icons/";
+	private final String iconRoot = "files/icons/";
 	
 	private ArrayList<Notifiable> objectsToNotify = new ArrayList<Notifiable>();
 	

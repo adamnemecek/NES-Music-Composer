@@ -125,6 +125,7 @@ public class PianoRollView extends JPanel implements Notifiable {
 	
 	public void setInstrumentView(InstrumentAndEffectsView instrumentView) {
 		this.instrumentView = instrumentView;
+		instrumentView.setGridWidth(gridWidth);
 	}
 	
 	public void registerKeyboard(Keyboard keyboard) {
@@ -163,6 +164,9 @@ public class PianoRollView extends JPanel implements Notifiable {
 			dims = new Point(gridWidth, laneHeight);
 		} else {
 			dims.x = gridWidth;
+		}
+		if(instrumentView != null) {
+			instrumentView.setGridWidth(gridWidth);
 		}
 	}
 	
@@ -264,6 +268,7 @@ public class PianoRollView extends JPanel implements Notifiable {
 		}
 		super.paintComponent(g);
 		paintView(g);
+		instrumentView.repaint();
 	}
 	
 	private void generateNoteLaneNumbers() {
