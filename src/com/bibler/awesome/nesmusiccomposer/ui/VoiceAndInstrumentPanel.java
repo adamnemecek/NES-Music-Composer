@@ -30,8 +30,8 @@ public class VoiceAndInstrumentPanel extends JPanel {
 	private void initialize() {
 		
 		setLayout(new BorderLayout());
-		instrumentAndEffectsView = new InstrumentAndEffectsView(150);
-		settingsPanel = new VoiceSettingsPanel(120, 150);
+		instrumentAndEffectsView = new InstrumentAndEffectsView(250);
+		settingsPanel = new VoiceSettingsPanel(220, 250);
 		instrumentScroll = new JScrollPane(instrumentAndEffectsView, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(settingsPanel, BorderLayout.WEST);
 		add(instrumentScroll, BorderLayout.CENTER);

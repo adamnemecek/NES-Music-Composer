@@ -24,7 +24,7 @@ public class Keyboard extends JPanel implements Runnable, Notifier, Notifiable {
 	private KeyboardKey[] keys = new KeyboardKey[108];
 	private ArrayList<Notifiable> objectsToNotify = new ArrayList<Notifiable>();
 	
-	private int panelWidth;
+	private int panelWidth = 220;
 	private int panelHeight;
 	
 	public Keyboard() {
@@ -43,7 +43,6 @@ public class Keyboard extends JPanel implements Runnable, Notifier, Notifiable {
 	}
 	
 	private void calculateDimensions() {
-		panelWidth = 120;
 		panelHeight = 0;
 		for(KeyboardKey key : keys) {
 			if(key.getKeyType() == WHITE) {
@@ -82,7 +81,7 @@ public class Keyboard extends JPanel implements Runnable, Notifier, Notifiable {
 		for(int i = 0; i < 63; i++) {
 			keyHeight = keyHeights[i % 7];
 			keyName = keyBaseNames[i % 7] + (9 - (i / 7));
-			keys[keyValue] = new KeyboardKey(0, y, 120, keyHeight, keyValue, keyName, WHITE);
+			keys[keyValue] = new KeyboardKey(0, y, panelWidth, keyHeight, keyValue, keyName, WHITE);
 			y += keyHeight;
 			keyValue -= steps[i % 7];
 		}
@@ -104,7 +103,7 @@ public class Keyboard extends JPanel implements Runnable, Notifier, Notifiable {
 		for(int i = 0; i < 45; i++) {
 			keyName = keyBaseNames[i % 5] + (9 - (i / 5));
 			y = 168 * (i / 5) + keyYStartPositions[i % 5];
-			keys[keyValue] = new KeyboardKey(0, y, 70, 14, keyValue, keyName, BLACK);
+			keys[keyValue] = new KeyboardKey(0, y, 128, 14, keyValue, keyName, BLACK);
 			keyValue -= steps[i % 5];
 		}
 		
