@@ -108,6 +108,7 @@ public class Main {
 		frame.getKeyboard().registerObjectToNotify(compManager);
 		frame.getToolbar().registerObjectToNotify(compManager);
 		frame.getPianoRollView().registerKeyboard(frame.getKeyboard());
+		frame.getStatusPanel().registerObjectToNotify(manager);
 	}
 	
 	private static Instrument setupInstrumentOne() {

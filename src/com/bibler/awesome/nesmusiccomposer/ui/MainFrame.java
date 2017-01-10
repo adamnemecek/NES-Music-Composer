@@ -90,4 +90,8 @@ public class MainFrame extends JFrame implements Notifiable {
 		return getMainRollView().getKeyboard();
 	}
 
+	public VoiceSettingsPanel getStatusPanel() {
+		return mainPanel.getStatusPanel();
+	}
+
 }

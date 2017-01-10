@@ -178,7 +178,7 @@ public class MusicStream {
 	
 	private void advanceInstrumentCounter() {
 		currentInstrument = instrumentManager.getInstrument(currentFrameNumber);
-		System.out.println("Updated instrument to: " + currentInstrument.getInstrumentName());
+		//System.out.println("Updated instrument to: " + currentInstrument.getInstrumentName());
 	}
 	
 	private void fetchNextByte() {
@@ -230,6 +230,14 @@ public class MusicStream {
 			}
 		}
 		return null;
+	}
+
+	public void mute(boolean mute) {
+		stream.mute(mute);
+	}
+
+	public void updateChannelVolume(float f) {
+		stream.updateVolume(f);
 	}
 
 }

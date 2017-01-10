@@ -11,6 +11,19 @@ public class TriangleWaveGenerator extends WaveGenerator {
 		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15
 	};
 	
+	private float channelVolume = 1.0f;
+	
+	private boolean mute;
+	
+	@Override
+	public void updateVolume(float channelVolume) {
+		this.channelVolume = channelVolume;
+	}
+	
+	@Override
+	public void mute(boolean mute) {
+		this.mute = mute;
+	}
 	
 	@Override
 	public void reset() {
@@ -46,7 +59,7 @@ public class TriangleWaveGenerator extends WaveGenerator {
 		if(timer < 2) {
 			currentVolume = 0;
 		}
-		return currentVolume;
+		return (int) (currentVolume * (mute ? 0 : 1) * channelVolume);
 	}
 	
 }

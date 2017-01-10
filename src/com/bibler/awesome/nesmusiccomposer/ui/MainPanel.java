@@ -58,4 +58,8 @@ public class MainPanel extends JPanel {
 		return pianoRoll;
 	}
 
+	public VoiceSettingsPanel getStatusPanel() {
+		return pianoRoll.getStatusPanel();
+	}
+
 }

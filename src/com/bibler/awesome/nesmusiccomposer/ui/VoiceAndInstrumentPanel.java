@@ -1,6 +1,7 @@
 package com.bibler.awesome.nesmusiccomposer.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 
 import javax.swing.BoundedRangeModel;
 import javax.swing.JPanel;
@@ -18,20 +19,20 @@ public class VoiceAndInstrumentPanel extends JPanel {
 	private JScrollPane instrumentScroll;
 	
 	
-	public VoiceAndInstrumentPanel() {
+	public VoiceAndInstrumentPanel(Color bg) {
 		super();
-		initialize();
+		initialize(bg);
 	}
 	
 	public InstrumentAndEffectsView getInstrumentAndEffectsView() {
 		return instrumentAndEffectsView;	
 	}
 	
-	private void initialize() {
+	private void initialize(Color bg) {
 		
 		setLayout(new BorderLayout());
 		instrumentAndEffectsView = new InstrumentAndEffectsView(250);
-		settingsPanel = new VoiceSettingsPanel(220, 250);
+		settingsPanel = new VoiceSettingsPanel(220, 250, bg);
 		instrumentScroll = new JScrollPane(instrumentAndEffectsView, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		add(settingsPanel, BorderLayout.WEST);
 		add(instrumentScroll, BorderLayout.CENTER);

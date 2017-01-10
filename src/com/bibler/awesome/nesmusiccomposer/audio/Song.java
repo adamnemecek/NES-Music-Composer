@@ -110,4 +110,36 @@ public class Song implements Notifiable {
 			break;
 		}	
 	}
+
+	public void muteChannel(String channel, boolean mute) {
+		MusicStream stream = null;
+		switch(channel) {
+		case "Square 1":
+			stream = streams[0];
+			break;
+		case "Square 2":
+			stream = streams[1];
+			break;
+		case "Tri":
+			stream = streams[2];
+			break;
+		}
+		stream.mute(mute);
+	}
+
+	public void updateChannelVolume(String channel, String volume) {
+		MusicStream stream = null;
+		switch(channel) {
+		case "Square 1":
+			stream = streams[0];
+			break;
+		case "Square 2":
+			stream = streams[1];
+			break;
+		case "Tri":
+			stream = streams[2];
+			break;
+		}
+		stream.updateChannelVolume(Float.parseFloat(volume));
+	}
 }

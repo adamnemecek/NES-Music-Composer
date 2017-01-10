@@ -59,10 +59,19 @@ public class SongManager implements Notifier, Notifiable {
 	public void resetSong() {
 		notify("RESET");
 	}
+	
+	private void muteChannel(String channel, boolean mute) {
+		currentSong.muteChannel(channel, mute);
+	}
+	
+	private void updateChannelVolume(String channel, String volume) {
+		currentSong.updateChannelVolume(channel, volume);
+	}
 
 	@Override
 	public void takeNotice(String message, Object Notifier) {
-		switch(message) {
+		String[] messages = message.split(":");
+		switch(messages[0]) {
 		case "PLAY":
 			play();
 			break;
@@ -76,6 +85,15 @@ public class SongManager implements Notifier, Notifiable {
 			if(Notifier instanceof APU) {
 				nextFrame();
 			}
+			break;
+		case "MUTE":
+			muteChannel(messages[1], true);
+			break;
+		case "UNMUTE":
+			muteChannel(messages[1], false);
+			break;
+		case "VOLUME":
+			updateChannelVolume(messages[1], messages[2]);
 		}
 	}
 

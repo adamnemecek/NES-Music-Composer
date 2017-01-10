@@ -57,7 +57,7 @@ public class MainRollView extends JPanel {
 		rightScroll.setPreferredSize(new Dimension(800 - imageWidth, 500));
 		leftScroll.getVerticalScrollBar().setModel(rightScroll.getVerticalScrollBar().getModel());
 		pianoRoll.setScrollPane(rightScroll);
-		voiceAndInstrumentPanel = new VoiceAndInstrumentPanel();
+		voiceAndInstrumentPanel = new VoiceAndInstrumentPanel(bg);
 		pianoRoll.setInstrumentView(voiceAndInstrumentPanel.getInstrumentAndEffectsView());
 		rightScroll.getHorizontalScrollBar().setModel(voiceAndInstrumentPanel.getInstrumentScroll().getHorizontalScrollBar().getModel());
 		setLayout(new BorderLayout());
@@ -76,6 +76,10 @@ public class MainRollView extends JPanel {
 
 	public Keyboard getKeyboard() {
 		return keyboard;
+	}
+
+	public VoiceSettingsPanel getStatusPanel() {
+		return voiceAndInstrumentPanel.getSettingsPanel();
 	}
 
 }

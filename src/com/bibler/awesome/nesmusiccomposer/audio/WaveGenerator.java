@@ -45,4 +45,8 @@ public class WaveGenerator {
 	public void setDuty(int duty) {}
 	
 	public void setPeriod(int period) {}
+
+	public void mute(boolean mute) {}
+
+	public void updateVolume(float channelVolume) {}
 }

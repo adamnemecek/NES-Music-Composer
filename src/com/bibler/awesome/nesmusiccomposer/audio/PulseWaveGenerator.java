@@ -13,8 +13,16 @@ public class PulseWaveGenerator extends WaveGenerator {
 	private int duty;
 	private int currentTimer;
 	private int currentStep;
+	private boolean mute;
+	private float channelVolume = 1;
+	
 	public PulseWaveGenerator(boolean pulseTwo) {
 		this.pulseTwo = pulseTwo;
+	}
+	
+	@Override
+	public void updateVolume(float channelVolume) {
+		this.channelVolume = channelVolume;
 	}
 	
 	@Override
@@ -29,6 +37,11 @@ public class PulseWaveGenerator extends WaveGenerator {
 		duty = 0;
 		currentTimer = 0;
 		currentStep = 7;
+	}
+	
+	@Override
+	public void mute(boolean mute) {
+		this.mute = mute;
 	}
 	
 	
@@ -95,7 +108,7 @@ public class PulseWaveGenerator extends WaveGenerator {
 	public int getSample() {
 		final int dutyLevel = (duty >> currentStep & 1);
 		final int sample = (envelope * dutyLevel);
-		return sample;
+		return (int) (sample * (mute ? 0 : 1) * channelVolume);
 	}
 	
 	@Override
